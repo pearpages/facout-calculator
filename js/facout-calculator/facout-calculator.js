@@ -1,6 +1,6 @@
 (function() {
    'use strict';
 
-   angular.module('facoutCalculator',[]);
+   angular.module('facoutCalculator',['ui.utils.masks']);
   
 })();

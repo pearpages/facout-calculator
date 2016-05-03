@@ -10,21 +10,21 @@
     <tbody>
         <tr>
             <td>Layer Limit</td>
-            <td><input type="number" ng-model="model.layerLimit"></td>
+            <td><input type="text" ui-number-mask="0" ng-model="model.layerLimit"></td>
             <td>Cede Fee %</td>
-            <td><input type="number" ng-model="model.cededFeePercentage"></td>
+            <td><input type="text" ui-number-mask="4" ng-model="model.cedeFeePercentage"></td>
         </tr>
         <tr>
             <td>Layer Premium</td>
-            <td><input type="number" ng-model="model.layerPremium"></td>
+            <td><input type="text" ui-number-mask="0" ng-model="model.layerPremium"></td>
             <td>Cede Fee in Amount</td>
-            <td><span class="number">{{model.getCedeFeeInAmount()}}</span></td>
+            <td><span class="number">{{model.getCedeFeeInAmount() | number}}</span></td>
         </tr>
         <tr>
             <td>Underlying Limit</td>
-            <td><input type="number" ng-model="model.underlyingLimit"></td>
+            <td><input type="text" ui-number-mask="0" ng-model="model.underlyingLimit"></td>
             <td>Cede Fee</td>
-            <td><span class="number">{{model.getCedeFee()}}</span></td>
+            <td><span class="number">{{model.getCedeFee() | number}}</span></td>
         </tr>
     </tbody>
 </table>
@@ -39,38 +39,38 @@
     <tbody>
         <tr>
             <td>Participation %</td>
-            <td><input type="number" ng-model="model.beforeParticipationPercentage"></td>
-            <td><input type="number" ng-model="model.reinsurerParticipationPercentage"></td>
-            <td><span class="number">{{model.getAfterParticipationPercentage()}}</span></td>
+            <td><input type="text" ui-number-mask="4" ng-model="model.beforeParticipationPercentage"></td>
+            <td><input type="text" ui-number-mask="4" ng-model="model.reinsurerParticipationPercentage"></td>
+            <td><span class="number">{{model.getAfterParticipationPercentage() | number}}</span></td>
         </tr>
         <tr>
             <td>Limit</td>
-            <td><span class="number">{{model.getBeforeLimit()}}</span></td>
-            <td><span class="number">{{model.getReinsurerLimit()}}</span></td>
-            <td><span class="number">{{model.getAfterLimit()}}</span></td>
+            <td><span class="number">{{model.getBeforeLimit() | number}}</span></td>
+            <td><span class="number">{{model.getReinsurerLimit() | number}}</span></td>
+            <td><span class="number">{{model.getAfterLimit() | number}}</span></td>
         </tr>
         <tr>
             <td>Gross Premium</td>
-            <td><span class="number">{{model.getBeforeGrossPremium()}}</span></td>
-            <td><span class="number">{{model.getReinsurerGrossPremium()}}</span></td>
-            <td><span class="number">{{model.getAfterGrossPremium()}}</span></td>
+            <td><span class="number">{{model.getBeforeGrossPremium() | number}}</span></td>
+            <td><span class="number">{{model.getReinsurerGrossPremium() | number}}</span></td>
+            <td><span class="number">{{model.getAfterGrossPremium() | number}}</span></td>
         </tr>
         <tr>
             <td>Broker Commission %</td>
-            <td><input type="number" ng-model="model.beforeBrokerCommissionPercentage"></td>
-            <td><span class="number">{{model.getReinsurerBrokerCommissionPercentage()}}</span></td>
-            <td><span class="number">{{model.getAfterBrokerCommissionPercentage()}}</span></td>
+            <td><input type="text" ui-number-mask="4" ng-model="model.beforeBrokerCommissionPercentage"></td>
+            <td><span class="number">{{model.getReinsurerBrokerCommissionPercentage() | number}}</span></td>
+            <td><span class="number">{{model.getAfterBrokerCommissionPercentage() | number}}</span></td>
         </tr>
         <tr>
             <td>Net Premium</td>
-            <td><span class="number">{{model.getBeforeNetPremium()}}</span></td>
-            <td><span class="number">{{model.getReinsurerNetPremium()}}</span></td>
-            <td><span class="number">{{model.getAfterNetPremium()}}</span></td>
+            <td><span class="number">{{model.getBeforeNetPremium() | number}}</span></td>
+            <td><span class="number">{{model.getReinsurerNetPremium() | number}}</span></td>
+            <td><span class="number">{{model.getAfterNetPremium() | number}}</span></td>
         </tr>
         <tr>
             <td>Taxes</td>
-            <td><input type="number" ng-model="model.beforeTaxes.value"></td>
-            <td><span class="number">{{model.getReinsurerTaxes()}}</span></td>
+            <td><input type="text" ui-number-mask="2" ng-model="model.beforeTaxes"></td>
+            <td><span class="number">N/A</span></td>
             <td><span class="number">{{model.getAfterTaxes()| number }}</span></td>
         </tr>
     </tbody>

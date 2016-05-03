@@ -10,36 +10,35 @@
            
            model.lob = false;
            /* layer details */
-           model.layerLimit = 0;
-           model.layerPremium = 0;
-           model.underlyingLimit = 0;
+                model.layerLimit = 0;
+                model.layerPremium = 0;
+                model.underlyingLimit = 0;
            /* cede fees */
-           model.cededFeePercentage = 0;
-           model.cedeFeeInAmount = 0;
-           model.cedeFee = 0;
+                model.cedeFeePercentage = 0;
+                // model.cedeFeeInAmount, computed value
+                // model.cedeFee, computed value
            /* HCC Before Fac Out */
-           model.beforeParticipationPercentage = 0;
-           model.beforeLimit = 0;
-           model.beforeGrossPremium = 0;
-           model.beforeBrokerCommissionPercentage = 0;
-           model.beforeNetPremium = 0;
-           model.beforeTaxes = {};
-           model.beforeTaxes.value = 0;
+                model.beforeParticipationPercentage = 0;
+                // model.beforeLimit, computed value
+                // model.beforeGrossPremium, computed value
+                model.beforeBrokerCommissionPercentage = 0;
+                // model.beforeNetPremium, computed value
+                model.beforeTaxes = 0;
            /* Reinsurer */
-           model.reinsurerParticipationPercentage = 0;
-           model.reinsurerLimit = 0;
-           model.reinsurerGrossPremium = 0;
-           model.reinsurerBrokerCommissionPercentage = 0;
-           model.reinsurerNetPremium = 0;
-           model.reinsurerNetPremium = 0;
-           model.reinsurerTaxes = 'N/A';
+                model.reinsurerParticipationPercentage = 0;
+                // model.reinsurerLimit, computed value
+                // model.reinsurerGrossPremium, computed value
+                // model.reinsurerBrokerCommissionPercentage, computed value
+                // model.reinsurerNetPremium, computed value
+                // model.reinsurerNetPremium, computed value
+                // model.reinsurerTaxes = 'N/A';
            /* HCC After Fa Out */
-           model.afterParticipationPercentage = 0;
-           model.afterLimit = 0;
-           model.afterGrossPremium = 0;
-           model.afterBrokerCommissionPercentage = 0;
-           model.afterNetPremium = 0;
-           model.afterTaxes = model.beforeTaxes;
+                // model.afterParticipationPercentage, computed value
+                // model.afterLimit, computed value
+                // model.afterGrossPremium, computed value
+                // model.afterBrokerCommissionPercentage, computed value
+                // model.afterNetPremium, computed value
+                // model.afterTaxes, computed value
            
            /* Interface */
            model.getCedeFeeInAmount = getCedeFeeInAmount;
@@ -60,77 +59,78 @@
            model.getReinsurerBrokerCommissionPercentage = getReinsurerBrokerCommissionPercentage;
            model.getAfterBrokerCommissionPercentage = getAfterBrokerCommissionPercentage;
            
-           model.getReinsurerTaxes = getReinsurerTaxes;
            model.getAfterTaxes = getAfterTaxes;
            
            model.getAfterParticipationPercentage = getAfterParticipationPercentage;
-           
-           function getReinsurerTaxes() {
-               return model.reinsurerTaxes;
-           }
+           model.getReinsurerParticipationPercentage = getReinsurerParticipationPercentage;
            
            function getAfterTaxes() {
-               return model.afterTaxes.value;
+               return model.beforeTaxes;
+           }
+           
+           function getReinsurerParticipationPercentage () {
+               return model.reinsurerParticipationPercentage;
            }
            
            function getAfterBrokerCommissionPercentage() {
-               return model.afterBrokerCommissionPercentage;
+               return model.beforeBrokerCommissionPercentage;
            }
            
            function getReinsurerBrokerCommissionPercentage() {
-               return model.reinsurerBrokerCommissionPercentage;
+               return model.beforeBrokerCommissionPercentage;
            }
            
            function getBeforeGrossPremium () {
-               return model.beforeGrossPremium;
+               return model.layerPremium * (model.beforeParticipationPercentage/100);
            }
            
            function getAfterGrossPremium() {
-               return model.afterGrossPremium;
+               return getBeforeGrossPremium() - getReinsurerGrossPremium();
            }
            
            function getReinsurerGrossPremium() {
-               return model.reinsurerGrossPremium;
+               return getBeforeGrossPremium() * (model.reinsurerParticipationPercentage/100);
+           }
+           
+           function getBeforeParticipationPercentage() {
+               return model.beforeParticipationPercentage;
            }
            
            function getAfterParticipationPercentage() {
-               return model.afterParticipationPercentage;
+               var aux = model.beforeParticipationPercentage * (model.reinsurerParticipationPercentage/100);
+               return model.beforeParticipationPercentage - aux;
            }
            
            function getCedeFeeInAmount() {
-               return model.cedeFeeInAmount;
+               return model.getReinsurerNetPremium() * (model.cedeFeePercentage / 100);
            }
            
            function getCedeFee() {
-               return model.cedeFee;
+               return getCedeFeeInAmount()/getReinsurerGrossPremium()*100;
            }
            
            function getBeforeLimit() {
-               return model.beforeLimit;
+               return model.layerLimit * (model.beforeParticipationPercentage/100);
            }
            
            function getAfterLimit() {
-               return model.afterLimit;
+               return getBeforeLimit() - getReinsurerLimit();
            }
            
            function getReinsurerLimit() {
-               return model.reinsurerLimit;
-           }
-           
-           function getGrossPremium() {
-               return model.grossPremium;
+               return getBeforeLimit() * (getReinsurerParticipationPercentage()/100);
            }
            
            function getBeforeNetPremium() {
-               return model.beforeNetPremium;
+               return model.getBeforeGrossPremium() * (1 - (model.beforeBrokerCommissionPercentage/100));
            }
            
            function getAfterNetPremium() {
-               return model.afterNetPremium;
+               return getBeforeNetPremium() - getReinsurerNetPremium();
            }
            
            function getReinsurerNetPremium() {
-               return model.reinsurerNetPremium;
+               return getReinsurerGrossPremium() * (1 - (getReinsurerBrokerCommissionPercentage()/100));
            }
        }
    });

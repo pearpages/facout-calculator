@@ -1,8 +1,9 @@
 body{
     background-color:#eee;
 }
-input[type="number"] {
+input[type="text"] {
     text-align:right;
+    padding-right: 16px;
 }
 span.number {
     display:block;
