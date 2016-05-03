@@ -23,7 +23,8 @@
            model.beforeGrossPremium = 0;
            model.beforeBrokerCommissionPercentage = 0;
            model.beforeNetPremium = 0;
-           model.beforeTaxes = 0;
+           model.beforeTaxes = {};
+           model.beforeTaxes.value = 0;
            /* Reinsurer */
            model.reinsurerParticipationPercentage = 0;
            model.reinsurerLimit = 0;
@@ -38,7 +39,7 @@
            model.afterGrossPremium = 0;
            model.afterBrokerCommissionPercentage = 0;
            model.afterNetPremium = 0;
-           model.afterTaxes = 0;
+           model.afterTaxes = model.beforeTaxes;
            
            /* Interface */
            model.getCedeFeeInAmount = getCedeFeeInAmount;
@@ -69,7 +70,7 @@
            }
            
            function getAfterTaxes() {
-               return model.afterTaxes;
+               return model.afterTaxes.value;
            }
            
            function getAfterBrokerCommissionPercentage() {
