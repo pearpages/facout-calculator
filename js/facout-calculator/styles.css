@@ -1,0 +1,12 @@
+body{
+    background-color:#eee;
+}
+input[type="number"] {
+    text-align:right;
+}
+span.number {
+    display:block;
+    padding-right: 16px;
+    width: 199px;
+    text-align: right;
+}
