@@ -1,13 +1,19 @@
 body{
     background-color:#eee;
 }
+input.taxes{
+    padding-right: 34px !important;
+}
+input {
+    width: 195px;
+}
 input[type="text"] {
     text-align:right;
     padding-right: 16px;
 }
 span.number {
     display:block;
-    padding-right: 16px;
+    padding-right: 62px;
     width: 199px;
     text-align: right;
 }

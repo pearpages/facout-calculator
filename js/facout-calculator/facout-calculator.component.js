@@ -17,7 +17,7 @@
                 model.cedeFeePercentage = 0;
                 // model.cedeFeeInAmount, computed value
                 // model.cedeFee, computed value
-           /* HCC Before Fac Out */
+           /*  Before Fac Out */
                 model.beforeParticipationPercentage = 0;
                 // model.beforeLimit, computed value
                 // model.beforeGrossPremium, computed value
@@ -32,7 +32,7 @@
                 // model.reinsurerNetPremium, computed value
                 // model.reinsurerNetPremium, computed value
                 // model.reinsurerTaxes = 'N/A';
-           /* HCC After Fa Out */
+           /*  After Fa Out */
                 // model.afterParticipationPercentage, computed value
                 // model.afterLimit, computed value
                 // model.afterGrossPremium, computed value
