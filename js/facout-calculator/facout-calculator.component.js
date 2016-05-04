@@ -87,11 +87,7 @@
            }
            
            function getTriReinsurerPayment() {
-               return getReinsurerNetPremium() - (
-                   getCedeFeeInAmount() + 
-                   getReinsurerAdminFee() +
-                   getReinsurerWHT()
-               );
+               return getTriCedePremiumPassThru() - getReinsurerWHT();
            }
            
            function getReinsurerWHT() {
