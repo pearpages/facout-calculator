@@ -8,7 +8,11 @@
        controller: function () {
            var model = this;
            
-           model.lob = false;
+           model.tri = false;
+           
+                model.beforeTriWht = 0;
+                model.beforeTriAdminFee = 0;
+           
            /* layer details */
                 model.layerLimit = 0;
                 model.layerPremium = 0;
@@ -64,6 +68,49 @@
            model.getAfterParticipationPercentage = getAfterParticipationPercentage;
            model.getReinsurerParticipationPercentage = getReinsurerParticipationPercentage;
            
+           //TRI
+           model.getTriCedeFee = getTriCedeFee;
+           model.getTriCedePremiumPassThru = getTriCedePremiumPassThru;
+           model.getTriReinsurerPayment = getTriReinsurerPayment;
+           model.getReinsurerWHT = getReinsurerWHT;
+           model.getAfterWHT = getAfterWHT;
+           model.getReinsurerAdminFee = getReinsurerAdminFee;
+           model.getAfterAdminFee = getAfterAdminFee;
+           
+           function getTriCedeFee() {
+               return model.cedeFeePercentage * (
+                   getReinsurerNetPremium() - getReinsurerWHT()
+               );
+           }
+           
+           function getTriCedePremiumPassThru() {
+               return getReinsurerGrossPremium();
+           }
+           
+           function getTriReinsurerPayment() {
+               return getReinsurerNetPremium() - (
+                   getCedeFeeInAmount() + 
+                   getReinsurerAdminFee() +
+                   getReinsurerWHT()
+               );
+           }
+           
+           function getReinsurerWHT() {
+               return model.beforeTriWht * getReinsurerParticipationPercentage();
+           }
+           
+           function getAfterWHT() {
+               return model.beforeTriWht;
+           }
+           
+           function getReinsurerAdminFee() {
+               return model.getReinsurerParticipationPercentage() * model.beforeTriAdminFee;
+           }
+           
+           function getAfterAdminFee() {
+               return model.beforeTriAdminFee;
+           }
+           
            function getAfterTaxes() {
                return model.beforeTaxes;
            }
@@ -106,6 +153,9 @@
            }
            
            function getCedeFee() {
+               if(getReinsurerGrossPremium() === 0.0){
+                   return 0;
+               }
                return getCedeFeeInAmount()/getReinsurerGrossPremium()*100;
            }
            

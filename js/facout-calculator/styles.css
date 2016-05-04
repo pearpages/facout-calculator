@@ -1,6 +1,12 @@
 body{
     background-color:#eee;
 }
+.color-1{
+    background-color: steelblue;
+}
+.color-2{
+    background-color: forestgreen;
+}
 input.taxes{
     padding-right: 34px !important;
 }
