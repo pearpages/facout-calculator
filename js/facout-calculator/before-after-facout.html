@@ -38,19 +38,19 @@
         </tr>
         <tr ng-show="model.tri === false">
             <td>Taxes</td>
-            <td><input type="text" ui-number-mask="2" ng-model="model.beforeTaxes" class="taxes"></td>
+            <td><input type="text" ui-number-mask="2" ng-model="model.beforeTaxes" class="decimals-2"></td>
             <td><span class="number">N/A</span></td>
             <td><span class="number">{{model.getAfterTaxes()| number }}</span></td>
         </tr>
         <tr ng-show="model.tri === true">
             <td>WHT</td>
-            <td><input type="text" ng-model="model.beforeTriWht" ui-number-mask="2"></td>
+            <td><input class="decimals-2" type="text" ng-model="model.beforeTriWht" ui-number-mask="2"></td>
             <td><span class="number">{{model.getReinsurerWHT() | number}}</span></td>
             <td><span class="number color-2">{{model.getAfterWHT() | number}}</span></td>
         </tr>
         <tr ng-show="model.tri === true">
             <td>Admin Fee</td>
-            <td><input type="text" ng-model="model.beforeTriAdminFee" ui-number-mask="2"></td>
+            <td><input class="decimals-2" type="text" ng-model="model.beforeTriAdminFee" ui-number-mask="2"></td>
             <td><span class="number">{{model.getReinsurerAdminFee() | number}}</span></td>
             <td><span class="number color-1">{{model.getAfterAdminFee() | number}}</span></td>
         </tr>
