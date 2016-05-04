@@ -1,0 +1,21 @@
+<table class="table">
+    <thead>
+        <th>&nbsp;</th>
+        <th>Cede Fees</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Cede Fee %</td>
+            <td><input type="text" ui-number-mask="4" ng-model="model.cedeFeePercentage"></td>
+        </tr>
+        <tr>
+            <td>Cede Fee in Amount</td>
+            <td><span class="number">{{model.getCedeFeeInAmount() | number}}</span></td>
+        </tr>
+        <tr>
+            <td>Cede Fee</td>
+            <td><span class="number">{{model.getCedeFee() | number}}</span></td>
+        </tr>
+
+    </tbody>
+</table>

@@ -1,0 +1,46 @@
+<table class="table">
+    <thead>
+        <td>&nbsp;</td>
+        <td>HCC before Fac Out</td>
+        <td>Reinsurer</td>
+        <td>HCC after Fac Out</td>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Participation %</td>
+            <td><input type="text" ui-number-mask="4" ng-model="model.beforeParticipationPercentage"></td>
+            <td><input type="text" ui-number-mask="4" ng-model="model.reinsurerParticipationPercentage"></td>
+            <td><span class="number">{{model.getAfterParticipationPercentage() | number}}</span></td>
+        </tr>
+        <tr>
+            <td>Limit</td>
+            <td><span class="number">{{model.getBeforeLimit() | number}}</span></td>
+            <td><span class="number">{{model.getReinsurerLimit() | number}}</span></td>
+            <td><span class="number">{{model.getAfterLimit() | number}}</span></td>
+        </tr>
+        <tr>
+            <td>Gross Premium</td>
+            <td><span class="number">{{model.getBeforeGrossPremium() | number}}</span></td>
+            <td><span class="number">{{model.getReinsurerGrossPremium() | number}}</span></td>
+            <td><span class="number">{{model.getAfterGrossPremium() | number}}</span></td>
+        </tr>
+        <tr>
+            <td>Broker Commission %</td>
+            <td><input type="text" ui-number-mask="4" ng-model="model.beforeBrokerCommissionPercentage"></td>
+            <td><span class="number">{{model.getReinsurerBrokerCommissionPercentage() | number}}</span></td>
+            <td><span class="number">{{model.getAfterBrokerCommissionPercentage() | number}}</span></td>
+        </tr>
+        <tr>
+            <td>Net Premium</td>
+            <td><span class="number">{{model.getBeforeNetPremium() | number}}</span></td>
+            <td><span class="number">{{model.getReinsurerNetPremium() | number}}</span></td>
+            <td><span class="number">{{model.getAfterNetPremium() | number}}</span></td>
+        </tr>
+        <tr>
+            <td>Taxes</td>
+            <td><input type="text" ui-number-mask="2" ng-model="model.beforeTaxes" class="taxes"></td>
+            <td><span class="number">N/A</span></td>
+            <td><span class="number">{{model.getAfterTaxes()| number }}</span></td>
+        </tr>
+    </tbody>
+</table>
