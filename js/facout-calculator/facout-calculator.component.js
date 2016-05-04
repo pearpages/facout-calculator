@@ -78,9 +78,8 @@
            model.getAfterAdminFee = getAfterAdminFee;
            
            function getTriCedeFee() {
-               return model.cedeFeePercentage * (
-                   getReinsurerNetPremium() - getReinsurerWHT()
-               );
+               return (model.cedeFeePercentage/100 * (getReinsurerNetPremium() - getReinsurerWHT())) 
+               + (getReinsurerWHT() + getReinsurerAdminFee());
            }
            
            function getTriCedePremiumPassThru() {
@@ -96,7 +95,7 @@
            }
            
            function getReinsurerWHT() {
-               return model.beforeTriWht * getReinsurerParticipationPercentage();
+               return model.beforeTriWht * getReinsurerParticipationPercentage()/100;
            }
            
            function getAfterWHT() {
@@ -104,7 +103,7 @@
            }
            
            function getReinsurerAdminFee() {
-               return model.getReinsurerParticipationPercentage() * model.beforeTriAdminFee;
+               return model.getReinsurerParticipationPercentage()/100 * model.beforeTriAdminFee;
            }
            
            function getAfterAdminFee() {
