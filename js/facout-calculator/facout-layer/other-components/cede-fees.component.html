@@ -24,7 +24,7 @@
             <td class="foc-blue"><span class="number">{{model.parent.getCedeFeeInAmount() | number}}</span></td>
         </tr>
         <tr ng-show="model.tri === false">
-            <td><div>Cede Fee %</div><div class="small">as % of Gross Reinsurance Premium <i class="uk-icon-info-circle" title="Info for reinsurer only"><i></div></td>
+            <td><div>Cede Fee %</div><div class="small">as % of Gross Reinsurance Premium <i class="uk-icon-info-circle" style="cursor:help" title="Info for reinsurer only"><i></div></td>
             <td><span class="number">{{model.parent.getCedeFee() | number}}%</span></td>
         </tr>
         <tr ng-show="model.tri === true">
