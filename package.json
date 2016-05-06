@@ -18,7 +18,6 @@
   "homepage": "https://github.com/pearpages/facout-calculator#readme",
   "dependencies": {
     "angular": "^1.5.5",
-    "angular-input-masks": "^2.3.0",
     "bootstrap": "^3.3.6"
   }
 }
