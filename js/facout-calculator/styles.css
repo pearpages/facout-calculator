@@ -1,7 +1,10 @@
 body{
     background-color:#eee;
 }
-
+.facout-calculator{
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
 div.container{
     width: 500px;
 }
