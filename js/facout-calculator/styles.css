@@ -1,6 +1,14 @@
 body{
     background-color:#eee;
 }
+
+div.container{
+    width: 500px;
+}
+.container .row table td,
+.container .row table th{
+    font-size: 10px;
+}
 .color-1{
     background-color: steelblue;
 }
@@ -11,7 +19,7 @@ input.decimals-2{
     padding-right: 34px !important;
 }
 input {
-    width: 195px;
+    width: 80px;
 }
 input[type="text"] {
     text-align:right;
@@ -20,6 +28,6 @@ input[type="text"] {
 span.number {
     display:block;
     padding-right: 62px;
-    width: 199px;
+    width: 80px;
     text-align: right;
 }
