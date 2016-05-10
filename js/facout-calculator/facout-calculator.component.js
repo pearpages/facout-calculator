@@ -9,7 +9,13 @@
            var model = this;
            
            model.tri = false;
-           model.howMany = [1,2,3,4,5];  
+           model.addLayer = addLayer;
+           model.howMany = [1];  
+           
+           function addLayer() {
+               model.howMany.push(model.howMany[model.howMany.length-1]+1);
+               console.log(model.howMany);
+           }
        }
    });
 })();
