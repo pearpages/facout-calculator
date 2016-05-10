@@ -1,9 +1,8 @@
-(function() {
    'use strict';
-
-   angular.module('facoutCalculator')
-   .component("facoutLayer",{
-       templateUrl: 'js/facout-calculator/facout-layer/facout-layer.component.html',
+module.exports = function (app) {
+   
+   app.component("facoutLayer",{
+       template: require('./facout-layer.component.html'),
        bindings: {
            layerId: "<",
            tri: "<",
@@ -190,4 +189,4 @@
            }
        }
    });
-})();
+}

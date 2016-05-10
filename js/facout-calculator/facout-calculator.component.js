@@ -1,9 +1,9 @@
-(function() {
-   'use strict';
-
-   angular.module('facoutCalculator')
-   .component("facoutCalculator",{
-       templateUrl: 'js/facout-calculator/facout-calculator.component.html',
+module.exports = function(app) {
+    'use strict';
+    require('./facout-layer/facout-layer.component')(app);
+    
+    app.component("facoutCalculator",{
+       template: require('./facout-calculator.component.html'),
        controllerAs: 'model',
        controller: function () {
            var model = this;
@@ -23,5 +23,5 @@
                }
            }
        }
-   });
-})();
+   });   
+}
