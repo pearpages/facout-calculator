@@ -4,6 +4,7 @@ body{
 .facout-calculator{
     border: 1px solid #ccc;
     border-radius: 10px;
+    background-color: #FFF;
 }
 div.container{
     width: 500px;
