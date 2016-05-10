@@ -4,9 +4,16 @@
    angular.module('facoutCalculator')
    .component("facoutLayer",{
        templateUrl: 'js/facout-calculator/facout-layer/facout-layer.component.html',
+       bindings: {
+           layerId: "<",
+           tri: "<",
+           onDelete: "&"
+       },
        controllerAs: 'model',
        controller: function () {
            var model = this;
+           
+           model.$onInit = $onInit;
            
            model.tri = false;
            
@@ -76,6 +83,10 @@
            model.getAfterWHT = getAfterWHT;
            model.getReinsurerAdminFee = getReinsurerAdminFee;
            model.getAfterAdminFee = getAfterAdminFee;
+           
+           function $onInit() {
+               console.log(model.layerId,model.tri,model.onDelete);
+           }
            
            function getTriCedeFee() {
                return (model.cedeFeePercentage/100 * (getReinsurerNetPremium() - getReinsurerWHT())) 

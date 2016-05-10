@@ -34,3 +34,6 @@ span.number {
     width: 80px;
     text-align: right;
 }
+span.glyphicon.glyphicon-trash {
+    cursor: pointer;
+}

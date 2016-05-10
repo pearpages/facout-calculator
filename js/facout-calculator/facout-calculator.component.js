@@ -10,11 +10,17 @@
            
            model.tri = false;
            model.addLayer = addLayer;
+           model.removeLayer = removeLayer;
            model.howMany = [1];  
            
            function addLayer() {
                model.howMany.push(model.howMany[model.howMany.length-1]+1);
-               console.log(model.howMany);
+           }
+           
+           function removeLayer() {
+               if(model.howMany.length > 1) {
+                    model.howMany.pop();                   
+               }
            }
        }
    });
