@@ -1,0 +1,58 @@
+<table class="table">
+    <thead>
+        <th>&nbsp;</th>
+        <th>HCC before Fac Out</th>
+        <th>Reinsurer</th>
+        <th>HCC after Fac Out</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Participation %</td>
+            <td><input type="text" ui-number-mask="4" ng-model="model.parent.beforeParticipationPercentage"></td>
+            <td><input type="text" ui-number-mask="4" ng-model="model.parent.reinsurerParticipationPercentage"></td>
+            <td><span class="number">{{model.parent.getAfterParticipationPercentage() | number}}</span></td>
+        </tr>
+        <tr>
+            <td>Limit</td>
+            <td><span class="number">{{model.parent.getBeforeLimit() | number}}</span></td>
+            <td><span class="number">{{model.parent.getReinsurerLimit() | number}}</span></td>
+            <td><span class="number">{{model.parent.getAfterLimit() | number}}</span></td>
+        </tr>
+        <tr>
+            <td>Gross Premium</td>
+            <td><span class="number">{{model.parent.getBeforeGrossPremium() | number}}</span></td>
+            <td><span class="number">{{model.parent.getReinsurerGrossPremium() | number}}</span></td>
+            <td><span class="number">{{model.parent.getAfterGrossPremium() | number}}</span></td>
+        </tr>
+        <tr>
+            <td>Broker Commission %</td>
+            <td><input type="text" ui-number-mask="4" ng-model="model.parent.beforeBrokerCommissionPercentage"></td>
+            <td><span class="number">{{model.parent.getReinsurerBrokerCommissionPercentage() | number}}</span></td>
+            <td><span class="number">{{model.parent.getAfterBrokerCommissionPercentage() | number}}</span></td>
+        </tr>
+        <tr>
+            <td>Net Premium</td>
+            <td><span class="number">{{model.parent.getBeforeNetPremium() | number}}</span></td>
+            <td><span class="number">{{model.parent.getReinsurerNetPremium() | number}}</span></td>
+            <td><span class="number">{{model.parent.getAfterNetPremium() | number}}</span></td>
+        </tr>
+        <tr ng-show="model.parent.tri === false">
+            <td>Taxes</td>
+            <td><input type="text" ui-number-mask="2" ng-model="model.parent.beforeTaxes" class="decimals-2"></td>
+            <td><span class="number">N/A</span></td>
+            <td><span class="number">{{model.parent.getAfterTaxes()| number }}</span></td>
+        </tr>
+        <tr ng-show="model.parent.tri === true">
+            <td>WHT</td>
+            <td><input class="decimals-2" type="text" ng-model="model.parent.beforeTriWht" ui-number-mask="2"></td>
+            <td><span class="number">{{model.parent.getReinsurerWHT() | number}}</span></td>
+            <td><span class="number color-2">{{model.parent.getAfterWHT() | number}}</span></td>
+        </tr>
+        <tr ng-show="model.parent.tri === true">
+            <td>Admin Fee</td>
+            <td><input class="decimals-2" type="text" ng-model="model.parent.beforeTriAdminFee" ui-number-mask="2"></td>
+            <td><span class="number">{{model.parent.getReinsurerAdminFee() | number}}</span></td>
+            <td><span class="number color-1">{{model.parent.getAfterAdminFee() | number}}</span></td>
+        </tr>
+    </tbody>
+</table>

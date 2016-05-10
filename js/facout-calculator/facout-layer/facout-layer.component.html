@@ -7,16 +7,16 @@
     </div>
     <div class="row">
         <div class="col-md-6 col-sm-6">
-            <ng-include src="'js/facout-calculator/facout-layer/layer-details.html'"></ng-include>
+            <layer-details parent="model"></layer-details>
         </div>
         <div class="col-md-6 col-sm-6">
-            <ng-include src="'js/facout-calculator/facout-layer/cede-fees.html'"></ng-include>
+            <cede-fees parent="model"></cede-fees>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12">
-            <ng-include src="'js/facout-calculator/facout-layer/before-after-facout.html'"></ng-include>
+            <before-after-facout parent="model"></before-after-facout>
         </div>
     </div>
 

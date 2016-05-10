@@ -1,5 +1,8 @@
    'use strict';
 module.exports = function (app) {
+   require('./other-components/before-after-facout.component')(app);
+   require('./other-components/cede-fees.component')(app);
+   require('./other-components/layer-details.component')(app);
    
    app.component("facoutLayer",{
        template: require('./facout-layer.component.html'),

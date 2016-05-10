@@ -1,0 +1,32 @@
+<table class="table">
+    <thead>
+        <th>&nbsp;</th>
+        <th>Cede Fees</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Cede Fee %</td>
+            <td><input type="text" ui-number-mask="4" ng-model="model.parent.cedeFeePercentage"></td>
+        </tr>
+        <tr ng-show="model.parent.tri === false">
+            <td>Cede Fee in Amount</td>
+            <td><span class="number">{{model.parent.getCedeFeeInAmount() | number}}</span></td>
+        </tr>
+        <tr ng-show="model.parent.tri === false">
+            <td>Cede Fee</td>
+            <td><span class="number">{{model.parent.getCedeFee() | number}}</span></td>
+        </tr>
+        <tr ng-show="model.parent.tri === true">
+            <td>Cede Fee including legal fees and WHT</td>
+            <td><span class="number color-1">{{model.parent.getTriCedeFeeIncludingLegalFeesAndWht() | number}}</span></td>
+        </tr>
+        <tr ng-show="model.parent.tri === true">
+            <td>Ceded Premium Pass Thru</td>
+            <td><span class="number color-1">{{model.parent.getTriCedePremiumPassThru() | number}}</span></td>
+        </tr>
+        <tr ng-show="model.parent.tri === true">
+            <td>Reinsurer's Payment</td>
+            <td><span class="number color-1">{{model.parent.getTriReinsurerPayment() | number}}</span></td>
+        </tr>
+    </tbody>
+</table>
