@@ -85,7 +85,7 @@
            model.getAfterAdminFee = getAfterAdminFee;
            
            function $onInit() {
-               console.log(model.layerId,model.tri,model.onDelete);
+               // nothing
            }
            
            function getTriCedeFee() {

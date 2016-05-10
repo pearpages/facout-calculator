@@ -1,9 +1,9 @@
-<div class="row">
-    <div class="col-md-12">
-        <label>TRI <input type="checkbox" ng-model="model.tri"></label>
-    </div>
-</div>
 <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <label>TRI <input type="checkbox" ng-model="model.tri"></label> 
+        </div>
+    </div>
     <facout-layer ng-repeat="layerId in model.howMany" layer-id="layerId" tri="model.tri" on-delete="model.removeLayer()"></facout-layer>
     <button class="btn btn-default btn-sm" ng-click="model.addLayer()">Add Layer</button>    
 </div>
