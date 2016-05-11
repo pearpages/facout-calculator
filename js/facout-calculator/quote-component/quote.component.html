@@ -1,0 +1,34 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12">
+            <table class="table">
+    <tr>
+        <td>QuoteID</td>
+        <td><form class="form-inline">
+            <div class="form-group">
+                <input type="text" class="form-control" ng-model="model.quoteid">
+            </div>
+            <button class="btn btn-default btn-sm" placeholder="Quote ID" ng-click="model.search()">Search</button>
+        </form></td>
+    </tr>
+    <tr>
+        <td>Insured Name</td>
+        <td>{{model.insuredName}}</td>
+    </tr>
+    <tr>
+        <td>LOB</td>
+        <td>{{model.lob}}</td>
+    </tr>
+    <tr>
+        <td>Broker Name</td>
+        <td>{{model.brokerName}}</td>
+    </tr>
+    <tr>
+        <td>UW</td>
+        <td>{{model.uw}}</td>
+    </tr>
+</table>            
+        </div>
+    </div>
+</div>
+

@@ -1,9 +1,21 @@
-<div class="container">
+<div class="container-fluid facout-calculator" id="facout-calculator">
+    
     <div class="row">
-        <div class="col-md-12">
-            <label>TRI <input type="checkbox" ng-model="model.tri"></label> 
+        <div class="col-xs-12">
+            <quote parent="model"></quote>        
         </div>
     </div>
-    <facout-layer ng-repeat="layerId in model.howMany" layer-id="layerId" tri="model.tri" on-delete="model.removeLayer()"></facout-layer>
-    <button class="btn btn-default btn-sm" ng-click="model.addLayer()">Add Layer</button>    
+    
+    <div class="row" ng-repeat="layerId in model.howMany">
+        <div class="col-xs-12">
+            <facout-layer layer-id="layerId" tri="model.tri" on-delete="model.removeLayer()"></facout-layer>        
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-xs-12">
+            <button class="btn btn-default btn-sm" ng-click="model.addLayer()">Add Layer</button>        
+        </div>
+    </div>
+        
 </div>

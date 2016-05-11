@@ -1,40 +1,52 @@
 body{
     background-color:#eee;
 }
-.facout-calculator{
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: #FFF;
-}
-div.container{
-    width: 500px;
-}
-.container .row table td,
-.container .row table th{
-    font-size: 10px;
-}
 .color-1{
     background-color: steelblue;
 }
 .color-2{
     background-color: forestgreen;
 }
-input.decimals-2{
+
+/* general */
+#facout-calculator.facout-calculator.container-fluid{
+    border: 1px solid #ccc;
+    background-color: #FFF;
+    font-size: 10px !important;
+    padding: 8px;
+}
+
+#facout-calculator.facout-calculator .container-fluid{
+    border: 1px solid #ccc;
+}
+
+#facout-calculator.facout-calculator .container-fluid table {
+    font-size: 10px !important;
+}
+
+/* .facout-layer */
+#facout-calculator.facout-calculator .container-fluid .facout-layer {
+    font-size: 10px !important;
+}
+
+.facout-layer input.decimals-2{
     padding-right: 34px !important;
 }
-input {
+.facout-layer input {
     width: 80px;
 }
-input[type="text"] {
+.facout-layer input[type="text"] {
     text-align:right;
     padding-right: 16px;
 }
-span.number {
+.facout-layer span.number {
     display:block;
     padding-right: 62px;
     width: 80px;
     text-align: right;
 }
-span.glyphicon.glyphicon-trash {
+.facout-layer span.glyphicon.glyphicon-trash {
     cursor: pointer;
 }
+
+/* quote component */
