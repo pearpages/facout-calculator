@@ -4,7 +4,8 @@ module.exports = function(app) {
     app.component("layerDetails",{
        template: require('./layer-details.component.html'),
        bindings: {
-           parent: '<'
+           tri: '<',
+           parent: '='
        },
        controllerAs: 'model'
    });   

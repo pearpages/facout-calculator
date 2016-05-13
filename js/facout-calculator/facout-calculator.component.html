@@ -1,3 +1,10 @@
+<style>
+    input.ng-invalid {
+        background-color: darkred;
+        color: #fff;
+    }
+</style>
+
 <div class="container-fluid facout-calculator" id="facout-calculator">
     
     <div class="row">
@@ -6,15 +13,38 @@
         </div>
     </div>
     
-    <div class="row" ng-repeat="layerId in model.howMany">
+    <div class="row">
         <div class="col-xs-12">
-            <facout-layer layer-id="layerId" tri="model.tri" on-delete="model.removeLayer()"></facout-layer>        
+            <button class="btn btn-default btn sm" ng-click="model.loadMaranello()">Load Maranello</button>
+            
+            <fieldset style="display:inline-block" ng-if="model.existingLayers.length > 0">
+                <button class="btn btn-default btn sm" ng-click="model.loading = true" ng-show="!model.loading">Load Saved Layers</button>
+                <select ng-model="model.toLoad" ng-show="model.loading">
+                    <option ng-repeat="saved in model.existingLayers track by $index" value="{{$index}}">{{saved.name}}</option>
+                </select>
+                <button class="btn btn-default btn sm" ng-click="model.loadLayers()" ng-show="model.loading">Load</button>
+                <button class="btn btn-default btn sm" ng-click="model.deleteLayers()" ng-show="model.loading">Delete</button>
+                <button class="btn btn-default btn sm" ng-click="model.loading = false" ng-show="model.loading">Cancel</button>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="row" ng-repeat="layer in model.layers track by $index">
+        <div class="col-xs-12">
+            <facout-layer layer="layer" tri="model.tri" on-delete="model.removeLayer()"></facout-layer>        
         </div>
     </div>
     
     <div class="row">
         <div class="col-xs-12">
-            <button class="btn btn-default btn-sm" ng-click="model.addLayer()">Add Layer</button>        
+            <button class="btn btn-default btn-sm" ng-click="model.addLayer()">Add Layer</button>
+            
+            <fieldset ng-show="model.layers.length > 0">
+                <button class="btn btn-default btn sm" ng-click="model.saving = true" ng-show="!model.saving">Save Layers</button>
+                <input type="text" ng-model="model.layersName" placeholder="Layers Name" ng-show="model.saving">
+                <button class="btn btn-default btn sm" ng-click="model.saveLayers()" ng-show="model.saving">Save</button>
+                <button class="btn btn-default btn sm" ng-click="model.saving = false" ng-show="model.saving">Cancel</button>
+            </fieldset>
         </div>
     </div>
         

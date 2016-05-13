@@ -1,5 +1,5 @@
-   'use strict';
 module.exports = function (app) {
+    'use strict';
    require('./other-components/before-after-facout.component')(app);
    require('./other-components/cede-fees.component')(app);
    require('./other-components/layer-details.component')(app);
@@ -7,53 +7,19 @@ module.exports = function (app) {
    app.component("facoutLayer",{
        template: require('./facout-layer.component.html'),
        bindings: {
-           layerId: "<",
+           layer: "=",
            tri: "<",
            onDelete: "&"
        },
        controllerAs: 'model',
-       controller: function () {
+       controller: controller
+   });
+   
+   function controller() {
+       
            var model = this;
-           
-           model.$onInit = $onInit;
-           
-           model.tri = false;
-           
-                model.beforeTriWht = 0;
-                model.beforeTriAdminFee = 0;
-           
-           /* layer details */
-                model.layerLimit = 0;
-                model.layerPremium = 0;
-                model.underlyingLimit = 0;
-           /* cede fees */
-                model.cedeFeePercentage = 0;
-                // model.cedeFeeInAmount, computed value
-                // model.cedeFee, computed value
-           /*  Before Fac Out */
-                model.beforeParticipationPercentage = 0;
-                // model.beforeLimit, computed value
-                // model.beforeGrossPremium, computed value
-                model.beforeBrokerCommissionPercentage = 0;
-                // model.beforeNetPremium, computed value
-                model.beforeTaxes = 0;
-           /* Reinsurer */
-                model.reinsurerParticipationPercentage = 0;
-                // model.reinsurerLimit, computed value
-                // model.reinsurerGrossPremium, computed value
-                // model.reinsurerBrokerCommissionPercentage, computed value
-                // model.reinsurerNetPremium, computed value
-                // model.reinsurerNetPremium, computed value
-                // model.reinsurerTaxes = 'N/A';
-           /*  After Fa Out */
-                // model.afterParticipationPercentage, computed value
-                // model.afterLimit, computed value
-                // model.afterGrossPremium, computed value
-                // model.afterBrokerCommissionPercentage, computed value
-                // model.afterNetPremium, computed value
-                // model.afterTaxes, computed value
-           
-           /* Interface */
+       
+                           /* Interface */
            model.getCedeFeeInAmount = getCedeFeeInAmount;
            model.getCedeFee = getCedeFee;
            
@@ -78,7 +44,7 @@ module.exports = function (app) {
            model.getReinsurerParticipationPercentage = getReinsurerParticipationPercentage;
            
            //TRI
-           model.getTriCedeFee = getTriCedeFee;
+           model.getTriCedeFeeIncludingLegalFeesAndWht = getTriCedeFeeIncludingLegalFeesAndWht;
            model.getTriCedePremiumPassThru = getTriCedePremiumPassThru;
            model.getTriReinsurerPayment = getTriReinsurerPayment;
            model.getReinsurerWHT = getReinsurerWHT;
@@ -86,12 +52,8 @@ module.exports = function (app) {
            model.getReinsurerAdminFee = getReinsurerAdminFee;
            model.getAfterAdminFee = getAfterAdminFee;
            
-           function $onInit() {
-               // nothing
-           }
-           
-           function getTriCedeFee() {
-               return (model.cedeFeePercentage/100 * (getReinsurerNetPremium() - getReinsurerWHT())) 
+           function getTriCedeFeeIncludingLegalFeesAndWht() {
+               return (model.layer.cedeFeePercentage/100 * (getReinsurerNetPremium() - getReinsurerWHT())) 
                + (getReinsurerWHT() + getReinsurerAdminFee());
            }
            
@@ -100,43 +62,43 @@ module.exports = function (app) {
            }
            
            function getTriReinsurerPayment() {
-               return getReinsurerNetPremium() - getTriCedeFee();
+               return getReinsurerNetPremium() - getTriCedeFeeIncludingLegalFeesAndWht();
            }
            
            function getReinsurerWHT() {
-               return model.beforeTriWht * getReinsurerParticipationPercentage()/100;
+               return model.layer.beforeTriWht * getReinsurerParticipationPercentage()/100;
            }
            
            function getAfterWHT() {
-               return model.beforeTriWht;
+               return model.layer.beforeTriWht;
            }
            
            function getReinsurerAdminFee() {
-               return model.getReinsurerParticipationPercentage()/100 * model.beforeTriAdminFee;
+               return getReinsurerParticipationPercentage()/100 * model.layer.beforeTriAdminFee;
            }
            
            function getAfterAdminFee() {
-               return model.beforeTriAdminFee;
+               return model.layer.beforeTriAdminFee;
            }
            
            function getAfterTaxes() {
-               return model.beforeTaxes;
+               return model.layer.beforeTaxes;
            }
            
            function getReinsurerParticipationPercentage () {
-               return model.reinsurerParticipationPercentage;
+               return model.layer.reinsurerParticipationPercentage;
            }
            
            function getAfterBrokerCommissionPercentage() {
-               return model.beforeBrokerCommissionPercentage;
+               return model.layer.beforeBrokerCommissionPercentage;
            }
            
            function getReinsurerBrokerCommissionPercentage() {
-               return model.beforeBrokerCommissionPercentage;
+               return model.layer.beforeBrokerCommissionPercentage;
            }
            
            function getBeforeGrossPremium () {
-               return model.layerPremium * (model.beforeParticipationPercentage/100);
+               return model.layer.layerPremium * (model.layer.beforeParticipationPercentage/100);
            }
            
            function getAfterGrossPremium() {
@@ -144,31 +106,31 @@ module.exports = function (app) {
            }
            
            function getReinsurerGrossPremium() {
-               return getBeforeGrossPremium() * (model.reinsurerParticipationPercentage/100);
+               return getBeforeGrossPremium() * (model.layer.reinsurerParticipationPercentage/100);
            }
            
            function getBeforeParticipationPercentage() {
-               return model.beforeParticipationPercentage;
+               return model.layer.beforeParticipationPercentage;
            }
            
            function getAfterParticipationPercentage() {
-               var aux = model.beforeParticipationPercentage * (model.reinsurerParticipationPercentage/100);
-               return model.beforeParticipationPercentage - aux;
+               var aux = model.layer.beforeParticipationPercentage * (model.layer.reinsurerParticipationPercentage/100);
+               return model.layer.beforeParticipationPercentage - aux;
            }
            
            function getCedeFeeInAmount() {
-               return model.getReinsurerNetPremium() * (model.cedeFeePercentage / 100);
+               return getReinsurerNetPremium() * (model.layer.cedeFeePercentage / 100);
            }
            
            function getCedeFee() {
-               if(getReinsurerGrossPremium() === 0.0){
+               if(getReinsurerGrossPremium() === 0.0 ){
                    return 0;
                }
                return getCedeFeeInAmount()/getReinsurerGrossPremium()*100;
            }
            
            function getBeforeLimit() {
-               return model.layerLimit * (model.beforeParticipationPercentage/100);
+               return model.layer.layerLimit * (model.layer.beforeParticipationPercentage/100);
            }
            
            function getAfterLimit() {
@@ -180,7 +142,7 @@ module.exports = function (app) {
            }
            
            function getBeforeNetPremium() {
-               return model.getBeforeGrossPremium() * (1 - (model.beforeBrokerCommissionPercentage/100));
+               return getBeforeGrossPremium() * (1 - (model.layer.beforeBrokerCommissionPercentage/100));
            }
            
            function getAfterNetPremium() {
@@ -188,8 +150,7 @@ module.exports = function (app) {
            }
            
            function getReinsurerNetPremium() {
-               return getReinsurerGrossPremium() * (1 - (getReinsurerBrokerCommissionPercentage()/100));
+               return getBeforeNetPremium() * (getReinsurerParticipationPercentage()/100);
            }
-       }
-   });
+   }
 }

@@ -1,4 +1,4 @@
-<table class="table">
+<table class="uk-table uk-table-condensed uk-table-noborder">
     <thead>
         <th>&nbsp;</th>
         <th>HCC before Fac Out</th>
@@ -8,27 +8,27 @@
     <tbody>
         <tr>
             <td>Participation %</td>
-            <td><input type="text" ui-number-mask="4" ng-model="model.parent.beforeParticipationPercentage"></td>
-            <td><input type="text" ui-number-mask="4" ng-model="model.parent.reinsurerParticipationPercentage"></td>
-            <td><span class="number">{{model.parent.getAfterParticipationPercentage() | number}}</span></td>
+            <td><input placeholder="%" type="text" fcsa-number="{ maxDecimals: 4,preventInvalidInput: true,append:'%' }" ng-model="model.parent.layer.beforeParticipationPercentage"></td>
+            <td class="foc-yellow"><input placeholder="%" type="text" fcsa-number="{ maxDecimals: 4,preventInvalidInput: true,append:'%' }" ng-model="model.parent.layer.reinsurerParticipationPercentage"></td>
+            <td class="foc-green"><span class="number">{{model.parent.getAfterParticipationPercentage() | number}}%</span></td>
         </tr>
         <tr>
             <td>Limit</td>
             <td><span class="number">{{model.parent.getBeforeLimit() | number}}</span></td>
-            <td><span class="number">{{model.parent.getReinsurerLimit() | number}}</span></td>
-            <td><span class="number">{{model.parent.getAfterLimit() | number}}</span></td>
+            <td class="foc-yellow"><span class="number">{{model.parent.getReinsurerLimit() | number}}</span></td>
+            <td class="foc-green"><span class="number">{{model.parent.getAfterLimit() | number}}</span></td>
         </tr>
         <tr>
             <td>Gross Premium</td>
             <td><span class="number">{{model.parent.getBeforeGrossPremium() | number}}</span></td>
-            <td><span class="number">{{model.parent.getReinsurerGrossPremium() | number}}</span></td>
-            <td><span class="number">{{model.parent.getAfterGrossPremium() | number}}</span></td>
+            <td class="foc-yellow"><span class="number">{{model.parent.getReinsurerGrossPremium() | number}}</span></td>
+            <td class="foc-green"><span class="number">{{model.parent.getAfterGrossPremium() | number}}</span></td>
         </tr>
         <tr>
             <td>Broker Commission %</td>
-            <td><input type="text" ui-number-mask="4" ng-model="model.parent.beforeBrokerCommissionPercentage"></td>
-            <td><span class="number">{{model.parent.getReinsurerBrokerCommissionPercentage() | number}}</span></td>
-            <td><span class="number">{{model.parent.getAfterBrokerCommissionPercentage() | number}}</span></td>
+            <td class="foc-blue"><input placeholder="%" type="text" fcsa-number="{ maxDecimals: 4,preventInvalidInput: true,append:'%' }" ng-model="model.parent.layer.beforeBrokerCommissionPercentage"></td>
+            <td><span class="number">{{model.parent.getReinsurerBrokerCommissionPercentage() | number}}%</span></td>
+            <td class="foc-green"><span class="number">{{model.parent.getAfterBrokerCommissionPercentage() | number}}%</span></td>
         </tr>
         <tr>
             <td>Net Premium</td>
@@ -36,23 +36,23 @@
             <td><span class="number">{{model.parent.getReinsurerNetPremium() | number}}</span></td>
             <td><span class="number">{{model.parent.getAfterNetPremium() | number}}</span></td>
         </tr>
-        <tr ng-show="model.parent.tri === false">
+        <tr ng-show="model.tri === false">
             <td>Taxes</td>
-            <td><input type="text" ui-number-mask="2" ng-model="model.parent.beforeTaxes" class="decimals-2"></td>
+            <td><input type="text" fcsa-number ng-model="model.parent.layer.beforeTaxes" class="decimals-2"></td>
             <td><span class="number">N/A</span></td>
-            <td><span class="number">{{model.parent.getAfterTaxes()| number }}</span></td>
+            <td class="foc-green"><span class="number">{{model.parent.getAfterTaxes()| number }}</span></td>
         </tr>
-        <tr ng-show="model.parent.tri === true">
+        <tr ng-show="model.tri === true">
             <td>WHT</td>
-            <td><input class="decimals-2" type="text" ng-model="model.parent.beforeTriWht" ui-number-mask="2"></td>
+            <td><input class="decimals-2" type="text" ng-model="model.parent.layer.beforeTriWht" fcsa-number></td>
             <td><span class="number">{{model.parent.getReinsurerWHT() | number}}</span></td>
-            <td><span class="number color-2">{{model.parent.getAfterWHT() | number}}</span></td>
+            <td class="foc-green"><span class="number">{{model.parent.getAfterWHT() | number}}</span></td>
         </tr>
-        <tr ng-show="model.parent.tri === true">
+        <tr ng-show="model.tri === true">
             <td>Admin Fee</td>
-            <td><input class="decimals-2" type="text" ng-model="model.parent.beforeTriAdminFee" ui-number-mask="2"></td>
+            <td><input class="decimals-2" type="text" ng-model="model.parent.layer.beforeTriAdminFee" fcsa-number></td>
             <td><span class="number">{{model.parent.getReinsurerAdminFee() | number}}</span></td>
-            <td><span class="number color-1">{{model.parent.getAfterAdminFee() | number}}</span></td>
+            <td class="foc-blue"><span class="number">{{model.parent.getAfterAdminFee() | number}}</span></td>
         </tr>
     </tbody>
 </table>

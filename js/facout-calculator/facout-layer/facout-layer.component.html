@@ -1,22 +1,58 @@
-<div class="container-fluid facout-layer">
-    <div class="row">
-        <div class="col-md-11 col-sm-11"></div>
-        <div class="col-md-1 col-sm-1">
-            <span class="glyphicon glyphicon-trash" ng-click="model.onDelete()" ></span>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6 col-sm-6">
-            <layer-details parent="model"></layer-details>
-        </div>
-        <div class="col-md-6 col-sm-6">
-            <cede-fees parent="model"></cede-fees>
+<style>
+    .facout-layer {
+        border: 1px solid #ccc;
+        margin: 8px 0px !important;
+    }
+    .facout-layer span.uk-icon-trash {
+        cursor: pointer;
+    }
+    .facout-layer input{
+        text-align: right;
+    }
+    .facout-layer span.number{
+        text-align: right;
+        display: inline-block;
+        width: 142px;
+        padding: 4px;
+    }
+    .facout-layer .cede-fees > div {
+        float:left;
+    }
+    .facout-layer .cede-fees > div:first-child {
+        margin-right: 10px;
+    }
+</style>
+
+<div class="uk-grid facout-layer">
+    <div class="uk-width-1-1">
+        <div class="uk-grid">
+            <div class="uk-width-9-10">
+                &nbsp;
+            </div>
+            <div class="uk-width-1-10">
+                <span class="uk-button uk-button-mini" title="remove layer" ng-click="model.onDelete()">
+                    <span class="uk-icon-trash" ></span>
+                </span>
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <before-after-facout parent="model"></before-after-facout>
+    <div class="uk-width-1-1 cede-fees">
+        <div>
+            <layer-details tri="model.tri" parent="model"></layer-details>
         </div>
+        <div>
+            <cede-fees tri="model.tri" parent="model"></cede-fees>
+        </div>
+    </div>
+
+    <div class="uk-width-1-1">
+            <before-after-facout tri="model.tri" parent="model"></before-after-facout>
+    </div>
+
+    <div class="uk-width-1-1">
+        <div class="foc-green foc-box" style="display: block;">Quote Detail Screen</div>
+        <div class="foc-blue foc-box" style="display: block;">Invoicing Screen</div>
+        <div class="foc-yellow foc-box" style="display: block;">Reinsurance Screen</div>
     </div>
 </div>

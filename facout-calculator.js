@@ -48,10 +48,16 @@
 	   'use strict';
 	   
 	   var angular = __webpack_require__(1);
-	   var app = angular.module('facoutCalculator',[]);
+	   __webpack_require__(3);
+	   __webpack_require__(4);
+	   var app = angular.module('facoutCalculator',['fcsa-number','LocalStorageModule']);
+	   app.config(function (localStorageServiceProvider) {
+	       localStorageServiceProvider
+	       .setPrefix('fac-calculator');
+	   });
 	   
-	   __webpack_require__(3)(app);
-	  
+	   __webpack_require__(6)(app);
+
 	})();
 
 /***/ },
@@ -30937,101 +30943,773 @@
 
 /***/ },
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	module.exports = function(app) {
-	    'use strict';
-	    __webpack_require__(4)(app);
-	    __webpack_require__(12)(app);
-	    
-	    app.component("facoutCalculator",{
-	       template: __webpack_require__(14),
-	       controllerAs: 'model',
-	       controller: function () {
-	           var model = this;
-	           
-	           model.tri = false;
-	           model.addLayer = addLayer;
-	           model.removeLayer = removeLayer;
-	           model.howMany = [];  
-	           
-	           function addLayer() {
-	               if(model.howMany.length === 0 ){
-	                   model.howMany.push(1);
-	               }else{
-	                   model.howMany.push(model.howMany[model.howMany.length-1]+1);
-	               }
-	           }
-	           
-	           function removeLayer() {
-	               if(model.howMany.length > 0) {
-	                    model.howMany.pop();                   
-	               }
-	           }
-	       }
-	   });   
-	}
+	/*! angular-fcsa-number (version 1.5.3) 2014-10-17 */
+	(function() {
+	  var fcsaNumberModule,
+	    __hasProp = {}.hasOwnProperty;
+
+	  fcsaNumberModule = angular.module('fcsa-number', []);
+
+	  fcsaNumberModule.directive('fcsaNumber', [
+	    'fcsaNumberConfig', function(fcsaNumberConfig) {
+	      var addCommasToInteger, controlKeys, defaultOptions, getOptions, hasMultipleDecimals, isNotControlKey, isNotDigit, isNumber, makeIsValid, makeMaxDecimals, makeMaxDigits, makeMaxNumber, makeMinNumber;
+	      defaultOptions = fcsaNumberConfig.defaultOptions;
+	      getOptions = function(scope) {
+	        var option, options, value, _ref;
+	        options = angular.copy(defaultOptions);
+	        if (scope.options != null) {
+	          _ref = scope.$eval(scope.options);
+	          for (option in _ref) {
+	            if (!__hasProp.call(_ref, option)) continue;
+	            value = _ref[option];
+	            options[option] = value;
+	          }
+	        }
+	        return options;
+	      };
+	      isNumber = function(val) {
+	        return !isNaN(parseFloat(val)) && isFinite(val);
+	      };
+	      isNotDigit = function(which) {
+	        return which < 44 || which > 57 || which === 47;
+	      };
+	      controlKeys = [0, 8, 13];
+	      isNotControlKey = function(which) {
+	        return controlKeys.indexOf(which) === -1;
+	      };
+	      hasMultipleDecimals = function(val) {
+	        return (val != null) && val.toString().split('.').length > 2;
+	      };
+	      makeMaxDecimals = function(maxDecimals) {
+	        var regexString, validRegex;
+	        if (maxDecimals > 0) {
+	          regexString = "^-?\\d*\\.?\\d{0," + maxDecimals + "}$";
+	        } else {
+	          regexString = "^-?\\d*$";
+	        }
+	        validRegex = new RegExp(regexString);
+	        return function(val) {
+	          return validRegex.test(val);
+	        };
+	      };
+	      makeMaxNumber = function(maxNumber) {
+	        return function(val, number) {
+	          return number <= maxNumber;
+	        };
+	      };
+	      makeMinNumber = function(minNumber) {
+	        return function(val, number) {
+	          return number >= minNumber;
+	        };
+	      };
+	      makeMaxDigits = function(maxDigits) {
+	        var validRegex;
+	        validRegex = new RegExp("^-?\\d{0," + maxDigits + "}(\\.\\d*)?$");
+	        return function(val) {
+	          return validRegex.test(val);
+	        };
+	      };
+	      makeIsValid = function(options) {
+	        var validations;
+	        validations = [];
+	        if (options.maxDecimals != null) {
+	          validations.push(makeMaxDecimals(options.maxDecimals));
+	        }
+	        if (options.max != null) {
+	          validations.push(makeMaxNumber(options.max));
+	        }
+	        if (options.min != null) {
+	          validations.push(makeMinNumber(options.min));
+	        }
+	        if (options.maxDigits != null) {
+	          validations.push(makeMaxDigits(options.maxDigits));
+	        }
+	        return function(val) {
+	          var i, number, _i, _ref;
+	          if (!isNumber(val)) {
+	            return false;
+	          }
+	          if (hasMultipleDecimals(val)) {
+	            return false;
+	          }
+	          number = Number(val);
+	          for (i = _i = 0, _ref = validations.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+	            if (!validations[i](val, number)) {
+	              return false;
+	            }
+	          }
+	          return true;
+	        };
+	      };
+	      addCommasToInteger = function(val) {
+	        var commas, decimals, wholeNumbers;
+	        decimals = val.indexOf('.') == -1 ? '' : val.replace(/^-?\d+(?=\.)/, '');
+	        wholeNumbers = val.replace(/(\.\d+)$/, '');
+	        commas = wholeNumbers.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+	        return "" + commas + decimals;
+	      };
+	      return {
+	        restrict: 'A',
+	        require: 'ngModel',
+	        scope: {
+	          options: '@fcsaNumber'
+	        },
+	        link: function(scope, elem, attrs, ngModelCtrl) {
+	          var isValid, options;
+	          options = getOptions(scope);
+	          isValid = makeIsValid(options);
+	          ngModelCtrl.$parsers.unshift(function(viewVal) {
+	            var noCommasVal;
+	            noCommasVal = viewVal.replace(/,/g, '');
+	            if (isValid(noCommasVal) || !noCommasVal) {
+	              ngModelCtrl.$setValidity('fcsaNumber', true);
+	              return noCommasVal;
+	            } else {
+	              ngModelCtrl.$setValidity('fcsaNumber', false);
+	              return void 0;
+	            }
+	          });
+	          ngModelCtrl.$formatters.push(function(val) {
+	            if ((options.nullDisplay != null) && (!val || val === '')) {
+	              return options.nullDisplay;
+	            }
+	            if ((val == null) || !isValid(val)) {
+	              return val;
+	            }
+	            ngModelCtrl.$setValidity('fcsaNumber', true);
+	            val = addCommasToInteger(val.toString());
+	            if (options.prepend != null) {
+	              val = "" + options.prepend + val;
+	            }
+	            if (options.append != null) {
+	              val = "" + val + options.append;
+	            }
+	            return val;
+	          });
+	          elem.on('blur', function() {
+	            var formatter, viewValue, _i, _len, _ref;
+	            viewValue = ngModelCtrl.$modelValue;
+	            if ((viewValue == null) || !isValid(viewValue)) {
+	              return;
+	            }
+	            _ref = ngModelCtrl.$formatters;
+	            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	              formatter = _ref[_i];
+	              viewValue = formatter(viewValue);
+	            }
+	            ngModelCtrl.$viewValue = viewValue;
+	            return ngModelCtrl.$render();
+	          });
+	          elem.on('focus', function() {
+	            var val;
+	            val = elem.val();
+	            if (options.prepend != null) {
+	              val = val.replace(options.prepend, '');
+	            }
+	            if (options.append != null) {
+	              val = val.replace(options.append, '');
+	            }
+	            elem.val(val.replace(/,/g, ''));
+	            return elem[0].select();
+	          });
+	          if (options.preventInvalidInput === true) {
+	            return elem.on('keypress', function(e) {
+	              if (isNotDigit(e.which) && isNotControlKey(e.which)) {
+	                return e.preventDefault();
+	              }
+	            });
+	          }
+	        }
+	      };
+	    }
+	  ]);
+
+	  fcsaNumberModule.provider('fcsaNumberConfig', function() {
+	    var _defaultOptions;
+	    _defaultOptions = {};
+	    this.setDefaultOptions = function(defaultOptions) {
+	      return _defaultOptions = defaultOptions;
+	    };
+	    this.$get = function() {
+	      return {
+	        defaultOptions: _defaultOptions
+	      };
+	    };
+	  });
+
+	}).call(this);
+
 
 /***/ },
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	   'use strict';
+	__webpack_require__(5);
+	module.exports = 'LocalStorageModule';
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	var isDefined = angular.isDefined,
+	  isUndefined = angular.isUndefined,
+	  isNumber = angular.isNumber,
+	  isObject = angular.isObject,
+	  isArray = angular.isArray,
+	  extend = angular.extend,
+	  toJson = angular.toJson;
+
+	angular
+	  .module('LocalStorageModule', [])
+	  .provider('localStorageService', function() {
+	    // You should set a prefix to avoid overwriting any local storage variables from the rest of your app
+	    // e.g. localStorageServiceProvider.setPrefix('yourAppName');
+	    // With provider you can use config as this:
+	    // myApp.config(function (localStorageServiceProvider) {
+	    //    localStorageServiceProvider.prefix = 'yourAppName';
+	    // });
+	    this.prefix = 'ls';
+
+	    // You could change web storage type localstorage or sessionStorage
+	    this.storageType = 'localStorage';
+
+	    // Cookie options (usually in case of fallback)
+	    // expiry = Number of days before cookies expire // 0 = Does not expire
+	    // path = The web path the cookie represents
+	    this.cookie = {
+	      expiry: 30,
+	      path: '/'
+	    };
+
+	    // Send signals for each of the following actions?
+	    this.notify = {
+	      setItem: true,
+	      removeItem: false
+	    };
+
+	    // Setter for the prefix
+	    this.setPrefix = function(prefix) {
+	      this.prefix = prefix;
+	      return this;
+	    };
+
+	    // Setter for the storageType
+	    this.setStorageType = function(storageType) {
+	      this.storageType = storageType;
+	      return this;
+	    };
+
+	    // Setter for cookie config
+	    this.setStorageCookie = function(exp, path) {
+	      this.cookie.expiry = exp;
+	      this.cookie.path = path;
+	      return this;
+	    };
+
+	    // Setter for cookie domain
+	    this.setStorageCookieDomain = function(domain) {
+	      this.cookie.domain = domain;
+	      return this;
+	    };
+
+	    // Setter for notification config
+	    // itemSet & itemRemove should be booleans
+	    this.setNotify = function(itemSet, itemRemove) {
+	      this.notify = {
+	        setItem: itemSet,
+	        removeItem: itemRemove
+	      };
+	      return this;
+	    };
+
+	    this.$get = ['$rootScope', '$window', '$document', '$parse', function($rootScope, $window, $document, $parse) {
+	      var self = this;
+	      var prefix = self.prefix;
+	      var cookie = self.cookie;
+	      var notify = self.notify;
+	      var storageType = self.storageType;
+	      var webStorage;
+
+	      // When Angular's $document is not available
+	      if (!$document) {
+	        $document = document;
+	      } else if ($document[0]) {
+	        $document = $document[0];
+	      }
+
+	      // If there is a prefix set in the config lets use that with an appended period for readability
+	      if (prefix.substr(-1) !== '.') {
+	        prefix = !!prefix ? prefix + '.' : '';
+	      }
+	      var deriveQualifiedKey = function(key) {
+	        return prefix + key;
+	      };
+	      // Checks the browser to see if local storage is supported
+	      var browserSupportsLocalStorage = (function () {
+	        try {
+	          var supported = (storageType in $window && $window[storageType] !== null);
+
+	          // When Safari (OS X or iOS) is in private browsing mode, it appears as though localStorage
+	          // is available, but trying to call .setItem throws an exception.
+	          //
+	          // "QUOTA_EXCEEDED_ERR: DOM Exception 22: An attempt was made to add something to storage
+	          // that exceeded the quota."
+	          var key = deriveQualifiedKey('__' + Math.round(Math.random() * 1e7));
+	          if (supported) {
+	            webStorage = $window[storageType];
+	            webStorage.setItem(key, '');
+	            webStorage.removeItem(key);
+	          }
+
+	          return supported;
+	        } catch (e) {
+	          storageType = 'cookie';
+	          $rootScope.$broadcast('LocalStorageModule.notification.error', e.message);
+	          return false;
+	        }
+	      }());
+
+	      // Directly adds a value to local storage
+	      // If local storage is not available in the browser use cookies
+	      // Example use: localStorageService.add('library','angular');
+	      var addToLocalStorage = function (key, value) {
+	        // Let's convert undefined values to null to get the value consistent
+	        if (isUndefined(value)) {
+	          value = null;
+	        } else {
+	          value = toJson(value);
+	        }
+
+	        // If this browser does not support local storage use cookies
+	        if (!browserSupportsLocalStorage || self.storageType === 'cookie') {
+	          if (!browserSupportsLocalStorage) {
+	            $rootScope.$broadcast('LocalStorageModule.notification.warning', 'LOCAL_STORAGE_NOT_SUPPORTED');
+	          }
+
+	          if (notify.setItem) {
+	            $rootScope.$broadcast('LocalStorageModule.notification.setitem', {key: key, newvalue: value, storageType: 'cookie'});
+	          }
+	          return addToCookies(key, value);
+	        }
+
+	        try {
+	          if (webStorage) {
+	            webStorage.setItem(deriveQualifiedKey(key), value);
+	          }
+	          if (notify.setItem) {
+	            $rootScope.$broadcast('LocalStorageModule.notification.setitem', {key: key, newvalue: value, storageType: self.storageType});
+	          }
+	        } catch (e) {
+	          $rootScope.$broadcast('LocalStorageModule.notification.error', e.message);
+	          return addToCookies(key, value);
+	        }
+	        return true;
+	      };
+
+	      // Directly get a value from local storage
+	      // Example use: localStorageService.get('library'); // returns 'angular'
+	      var getFromLocalStorage = function (key) {
+
+	        if (!browserSupportsLocalStorage || self.storageType === 'cookie') {
+	          if (!browserSupportsLocalStorage) {
+	            $rootScope.$broadcast('LocalStorageModule.notification.warning', 'LOCAL_STORAGE_NOT_SUPPORTED');
+	          }
+
+	          return getFromCookies(key);
+	        }
+
+	        var item = webStorage ? webStorage.getItem(deriveQualifiedKey(key)) : null;
+	        // angular.toJson will convert null to 'null', so a proper conversion is needed
+	        // FIXME not a perfect solution, since a valid 'null' string can't be stored
+	        if (!item || item === 'null') {
+	          return null;
+	        }
+
+	        try {
+	          return JSON.parse(item);
+	        } catch (e) {
+	          return item;
+	        }
+	      };
+
+	      // Remove an item from local storage
+	      // Example use: localStorageService.remove('library'); // removes the key/value pair of library='angular'
+	      var removeFromLocalStorage = function () {
+	        var i, key;
+	        for (i=0; i<arguments.length; i++) {
+	          key = arguments[i];
+	          if (!browserSupportsLocalStorage || self.storageType === 'cookie') {
+	            if (!browserSupportsLocalStorage) {
+	              $rootScope.$broadcast('LocalStorageModule.notification.warning', 'LOCAL_STORAGE_NOT_SUPPORTED');
+	            }
+
+	            if (notify.removeItem) {
+	              $rootScope.$broadcast('LocalStorageModule.notification.removeitem', {key: key, storageType: 'cookie'});
+	            }
+	            removeFromCookies(key);
+	          }
+	          else {
+	            try {
+	              webStorage.removeItem(deriveQualifiedKey(key));
+	              if (notify.removeItem) {
+	                $rootScope.$broadcast('LocalStorageModule.notification.removeitem', {
+	                  key: key,
+	                  storageType: self.storageType
+	                });
+	              }
+	            } catch (e) {
+	              $rootScope.$broadcast('LocalStorageModule.notification.error', e.message);
+	              removeFromCookies(key);
+	            }
+	          }
+	        }
+	      };
+
+	      // Return array of keys for local storage
+	      // Example use: var keys = localStorageService.keys()
+	      var getKeysForLocalStorage = function () {
+
+	        if (!browserSupportsLocalStorage) {
+	          $rootScope.$broadcast('LocalStorageModule.notification.warning', 'LOCAL_STORAGE_NOT_SUPPORTED');
+	          return [];
+	        }
+
+	        var prefixLength = prefix.length;
+	        var keys = [];
+	        for (var key in webStorage) {
+	          // Only return keys that are for this app
+	          if (key.substr(0, prefixLength) === prefix) {
+	            try {
+	              keys.push(key.substr(prefixLength));
+	            } catch (e) {
+	              $rootScope.$broadcast('LocalStorageModule.notification.error', e.Description);
+	              return [];
+	            }
+	          }
+	        }
+	        return keys;
+	      };
+
+	      // Remove all data for this app from local storage
+	      // Also optionally takes a regular expression string and removes the matching key-value pairs
+	      // Example use: localStorageService.clearAll();
+	      // Should be used mostly for development purposes
+	      var clearAllFromLocalStorage = function (regularExpression) {
+
+	        // Setting both regular expressions independently
+	        // Empty strings result in catchall RegExp
+	        var prefixRegex = !!prefix ? new RegExp('^' + prefix) : new RegExp();
+	        var testRegex = !!regularExpression ? new RegExp(regularExpression) : new RegExp();
+
+	        if (!browserSupportsLocalStorage || self.storageType === 'cookie') {
+	          if (!browserSupportsLocalStorage) {
+	            $rootScope.$broadcast('LocalStorageModule.notification.warning', 'LOCAL_STORAGE_NOT_SUPPORTED');
+	          }
+	          return clearAllFromCookies();
+	        }
+
+	        var prefixLength = prefix.length;
+
+	        for (var key in webStorage) {
+	          // Only remove items that are for this app and match the regular expression
+	          if (prefixRegex.test(key) && testRegex.test(key.substr(prefixLength))) {
+	            try {
+	              removeFromLocalStorage(key.substr(prefixLength));
+	            } catch (e) {
+	              $rootScope.$broadcast('LocalStorageModule.notification.error', e.message);
+	              return clearAllFromCookies();
+	            }
+	          }
+	        }
+	        return true;
+	      };
+
+	      // Checks the browser to see if cookies are supported
+	      var browserSupportsCookies = (function() {
+	        try {
+	          return $window.navigator.cookieEnabled ||
+	          ("cookie" in $document && ($document.cookie.length > 0 ||
+	            ($document.cookie = "test").indexOf.call($document.cookie, "test") > -1));
+	          } catch (e) {
+	            $rootScope.$broadcast('LocalStorageModule.notification.error', e.message);
+	            return false;
+	          }
+	        }());
+
+	        // Directly adds a value to cookies
+	        // Typically used as a fallback is local storage is not available in the browser
+	        // Example use: localStorageService.cookie.add('library','angular');
+	        var addToCookies = function (key, value, daysToExpiry) {
+
+	          if (isUndefined(value)) {
+	            return false;
+	          } else if(isArray(value) || isObject(value)) {
+	            value = toJson(value);
+	          }
+
+	          if (!browserSupportsCookies) {
+	            $rootScope.$broadcast('LocalStorageModule.notification.error', 'COOKIES_NOT_SUPPORTED');
+	            return false;
+	          }
+
+	          try {
+	            var expiry = '',
+	            expiryDate = new Date(),
+	            cookieDomain = '';
+
+	            if (value === null) {
+	              // Mark that the cookie has expired one day ago
+	              expiryDate.setTime(expiryDate.getTime() + (-1 * 24 * 60 * 60 * 1000));
+	              expiry = "; expires=" + expiryDate.toGMTString();
+	              value = '';
+	            } else if (isNumber(daysToExpiry) && daysToExpiry !== 0) {
+	              expiryDate.setTime(expiryDate.getTime() + (daysToExpiry * 24 * 60 * 60 * 1000));
+	              expiry = "; expires=" + expiryDate.toGMTString();
+	            } else if (cookie.expiry !== 0) {
+	              expiryDate.setTime(expiryDate.getTime() + (cookie.expiry * 24 * 60 * 60 * 1000));
+	              expiry = "; expires=" + expiryDate.toGMTString();
+	            }
+	            if (!!key) {
+	              var cookiePath = "; path=" + cookie.path;
+	              if(cookie.domain){
+	                cookieDomain = "; domain=" + cookie.domain;
+	              }
+	              $document.cookie = deriveQualifiedKey(key) + "=" + encodeURIComponent(value) + expiry + cookiePath + cookieDomain;
+	            }
+	          } catch (e) {
+	            $rootScope.$broadcast('LocalStorageModule.notification.error', e.message);
+	            return false;
+	          }
+	          return true;
+	        };
+
+	        // Directly get a value from a cookie
+	        // Example use: localStorageService.cookie.get('library'); // returns 'angular'
+	        var getFromCookies = function (key) {
+	          if (!browserSupportsCookies) {
+	            $rootScope.$broadcast('LocalStorageModule.notification.error', 'COOKIES_NOT_SUPPORTED');
+	            return false;
+	          }
+
+	          var cookies = $document.cookie && $document.cookie.split(';') || [];
+	          for(var i=0; i < cookies.length; i++) {
+	            var thisCookie = cookies[i];
+	            while (thisCookie.charAt(0) === ' ') {
+	              thisCookie = thisCookie.substring(1,thisCookie.length);
+	            }
+	            if (thisCookie.indexOf(deriveQualifiedKey(key) + '=') === 0) {
+	              var storedValues = decodeURIComponent(thisCookie.substring(prefix.length + key.length + 1, thisCookie.length));
+	              try {
+	                return JSON.parse(storedValues);
+	              } catch(e) {
+	                return storedValues;
+	              }
+	            }
+	          }
+	          return null;
+	        };
+
+	        var removeFromCookies = function (key) {
+	          addToCookies(key,null);
+	        };
+
+	        var clearAllFromCookies = function () {
+	          var thisCookie = null, thisKey = null;
+	          var prefixLength = prefix.length;
+	          var cookies = $document.cookie.split(';');
+	          for(var i = 0; i < cookies.length; i++) {
+	            thisCookie = cookies[i];
+
+	            while (thisCookie.charAt(0) === ' ') {
+	              thisCookie = thisCookie.substring(1, thisCookie.length);
+	            }
+
+	            var key = thisCookie.substring(prefixLength, thisCookie.indexOf('='));
+	            removeFromCookies(key);
+	          }
+	        };
+
+	        var getStorageType = function() {
+	          return storageType;
+	        };
+
+	        // Add a listener on scope variable to save its changes to local storage
+	        // Return a function which when called cancels binding
+	        var bindToScope = function(scope, key, def, lsKey) {
+	          lsKey = lsKey || key;
+	          var value = getFromLocalStorage(lsKey);
+
+	          if (value === null && isDefined(def)) {
+	            value = def;
+	          } else if (isObject(value) && isObject(def)) {
+	            value = extend(value, def);
+	          }
+
+	          $parse(key).assign(scope, value);
+
+	          return scope.$watch(key, function(newVal) {
+	            addToLocalStorage(lsKey, newVal);
+	          }, isObject(scope[key]));
+	        };
+
+	        // Return localStorageService.length
+	        // ignore keys that not owned
+	        var lengthOfLocalStorage = function() {
+	          var count = 0;
+	          var storage = $window[storageType];
+	          for(var i = 0; i < storage.length; i++) {
+	            if(storage.key(i).indexOf(prefix) === 0 ) {
+	              count++;
+	            }
+	          }
+	          return count;
+	        };
+
+	        return {
+	          isSupported: browserSupportsLocalStorage,
+	          getStorageType: getStorageType,
+	          set: addToLocalStorage,
+	          add: addToLocalStorage, //DEPRECATED
+	          get: getFromLocalStorage,
+	          keys: getKeysForLocalStorage,
+	          remove: removeFromLocalStorage,
+	          clearAll: clearAllFromLocalStorage,
+	          bind: bindToScope,
+	          deriveKey: deriveQualifiedKey,
+	          length: lengthOfLocalStorage,
+	          cookie: {
+	            isSupported: browserSupportsCookies,
+	            set: addToCookies,
+	            add: addToCookies, //DEPRECATED
+	            get: getFromCookies,
+	            remove: removeFromCookies,
+	            clearAll: clearAllFromCookies
+	          }
+	        };
+	      }];
+	  });
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = function(app) {
+	    'use strict';
+	    __webpack_require__(7)(app);
+	    __webpack_require__(15)(app);
+	    __webpack_require__(17)(app);
+	    
+	    app.component("facoutCalculator",{
+	       template: __webpack_require__(18),
+	       controllerAs: 'model',
+	       controller: ['facOut','localStorageService',controller]
+	   });
+	   
+	   function controller(facOut,localStorageService) {
+	           var model = this;
+	           
+	           model.tri = false;
+	           model.layers = [];
+	           model.saving = false;
+	           model.loading = false;
+	           model.layersName;
+	           model.toLoad;
+	           model.existingLayers;
+	           model.saveLayers = saveLayers;
+	           model.addLayer = addLayer;
+	           model.removeLayer = removeLayer;
+	           model.loadMaranello = loadMaranello;
+	           model.loadLayers = loadLayers;
+	           model.deleteLayers = deleteLayers;
+	           
+	           model.$onInit = function () {
+	               loadLocalStorage();
+	               if(model.existingLayers.length > 0){
+	                   model.toLoad = "0";
+	               }
+	           }
+	           
+	           function addLayer() {
+	               model.layers.push(new facOut());
+	           }
+	           
+	           function loadLocalStorage() {
+	               model.existingLayers = localStorageService.get('FAC-CALC-LAYERS') || [];
+	           }
+	           
+	           function loadLayers() {
+	               model.layers = model.existingLayers[model.toLoad].data.slice();
+	           }
+	           
+	           function deleteLayers() {
+	               var i = model.toLoad;
+	               console.log(i);
+	               model.existingLayers.splice(i,1);
+	               localStorageService.set('FAC-CALC-LAYERS', model.existingLayers);
+	               alert('removed');
+	           }
+	           
+	           function saveLayers() {
+	               model.existingLayers.push({name: model.layersName, data: model.layers});
+	               localStorageService.set('FAC-CALC-LAYERS', model.existingLayers);
+	               model.layersName = '';
+	               alert('saved');
+	           }
+	           
+	           function removeLayer() {
+	               if(model.layers.length > 0) {
+	                    model.layers.pop();                   
+	               }
+	           }
+	           
+	           function loadMaranello() {
+	               model.layers = [];
+	               model.layers.push(new facOut());
+	               
+	               model.layers[0].layerLimit = 30000000;
+	               model.layers[0].layerPremium =  375000;
+	               model.layers[0].underlyingLimit = 10000000;
+	               model.layers[0].cedeFeePercentage = 20.00;
+	               model.layers[0].beforeParticipationPercentage = 100;
+	               model.layers[0].reinsurerParticipationPercentage = 33.3333;
+	               model.layers[0].beforeBrokerCommissionPercentage = 17.5;
+	               model.layers[0].beforeTaxes = 5000;
+	               model.layers[0].beforeTriWht = 11250;
+	               model.layers[0].beforeTriAdminFee = 31209.53;
+	           }
+	       }   
+	}
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
 	module.exports = function (app) {
-	   __webpack_require__(5)(app);
-	   __webpack_require__(7)(app);
-	   __webpack_require__(9)(app);
+	    'use strict';
+	   __webpack_require__(8)(app);
+	   __webpack_require__(10)(app);
+	   __webpack_require__(12)(app);
 	   
 	   app.component("facoutLayer",{
-	       template: __webpack_require__(11),
+	       template: __webpack_require__(14),
 	       bindings: {
-	           layerId: "<",
+	           layer: "=",
 	           tri: "<",
 	           onDelete: "&"
 	       },
 	       controllerAs: 'model',
-	       controller: function () {
+	       controller: controller
+	   });
+	   
+	   function controller() {
+	       
 	           var model = this;
-	           
-	           model.$onInit = $onInit;
-	           
-	           model.tri = false;
-	           
-	                model.beforeTriWht = 0;
-	                model.beforeTriAdminFee = 0;
-	           
-	           /* layer details */
-	                model.layerLimit = 0;
-	                model.layerPremium = 0;
-	                model.underlyingLimit = 0;
-	           /* cede fees */
-	                model.cedeFeePercentage = 0;
-	                // model.cedeFeeInAmount, computed value
-	                // model.cedeFee, computed value
-	           /*  Before Fac Out */
-	                model.beforeParticipationPercentage = 0;
-	                // model.beforeLimit, computed value
-	                // model.beforeGrossPremium, computed value
-	                model.beforeBrokerCommissionPercentage = 0;
-	                // model.beforeNetPremium, computed value
-	                model.beforeTaxes = 0;
-	           /* Reinsurer */
-	                model.reinsurerParticipationPercentage = 0;
-	                // model.reinsurerLimit, computed value
-	                // model.reinsurerGrossPremium, computed value
-	                // model.reinsurerBrokerCommissionPercentage, computed value
-	                // model.reinsurerNetPremium, computed value
-	                // model.reinsurerNetPremium, computed value
-	                // model.reinsurerTaxes = 'N/A';
-	           /*  After Fa Out */
-	                // model.afterParticipationPercentage, computed value
-	                // model.afterLimit, computed value
-	                // model.afterGrossPremium, computed value
-	                // model.afterBrokerCommissionPercentage, computed value
-	                // model.afterNetPremium, computed value
-	                // model.afterTaxes, computed value
-	           
-	           /* Interface */
+	       
+	                           /* Interface */
 	           model.getCedeFeeInAmount = getCedeFeeInAmount;
 	           model.getCedeFee = getCedeFee;
 	           
@@ -31056,7 +31734,7 @@
 	           model.getReinsurerParticipationPercentage = getReinsurerParticipationPercentage;
 	           
 	           //TRI
-	           model.getTriCedeFee = getTriCedeFee;
+	           model.getTriCedeFeeIncludingLegalFeesAndWht = getTriCedeFeeIncludingLegalFeesAndWht;
 	           model.getTriCedePremiumPassThru = getTriCedePremiumPassThru;
 	           model.getTriReinsurerPayment = getTriReinsurerPayment;
 	           model.getReinsurerWHT = getReinsurerWHT;
@@ -31064,12 +31742,8 @@
 	           model.getReinsurerAdminFee = getReinsurerAdminFee;
 	           model.getAfterAdminFee = getAfterAdminFee;
 	           
-	           function $onInit() {
-	               // nothing
-	           }
-	           
-	           function getTriCedeFee() {
-	               return (model.cedeFeePercentage/100 * (getReinsurerNetPremium() - getReinsurerWHT())) 
+	           function getTriCedeFeeIncludingLegalFeesAndWht() {
+	               return (model.layer.cedeFeePercentage/100 * (getReinsurerNetPremium() - getReinsurerWHT())) 
 	               + (getReinsurerWHT() + getReinsurerAdminFee());
 	           }
 	           
@@ -31078,43 +31752,43 @@
 	           }
 	           
 	           function getTriReinsurerPayment() {
-	               return getReinsurerNetPremium() - getTriCedeFee();
+	               return getReinsurerNetPremium() - getTriCedeFeeIncludingLegalFeesAndWht();
 	           }
 	           
 	           function getReinsurerWHT() {
-	               return model.beforeTriWht * getReinsurerParticipationPercentage()/100;
+	               return model.layer.beforeTriWht * getReinsurerParticipationPercentage()/100;
 	           }
 	           
 	           function getAfterWHT() {
-	               return model.beforeTriWht;
+	               return model.layer.beforeTriWht;
 	           }
 	           
 	           function getReinsurerAdminFee() {
-	               return model.getReinsurerParticipationPercentage()/100 * model.beforeTriAdminFee;
+	               return getReinsurerParticipationPercentage()/100 * model.layer.beforeTriAdminFee;
 	           }
 	           
 	           function getAfterAdminFee() {
-	               return model.beforeTriAdminFee;
+	               return model.layer.beforeTriAdminFee;
 	           }
 	           
 	           function getAfterTaxes() {
-	               return model.beforeTaxes;
+	               return model.layer.beforeTaxes;
 	           }
 	           
 	           function getReinsurerParticipationPercentage () {
-	               return model.reinsurerParticipationPercentage;
+	               return model.layer.reinsurerParticipationPercentage;
 	           }
 	           
 	           function getAfterBrokerCommissionPercentage() {
-	               return model.beforeBrokerCommissionPercentage;
+	               return model.layer.beforeBrokerCommissionPercentage;
 	           }
 	           
 	           function getReinsurerBrokerCommissionPercentage() {
-	               return model.beforeBrokerCommissionPercentage;
+	               return model.layer.beforeBrokerCommissionPercentage;
 	           }
 	           
 	           function getBeforeGrossPremium () {
-	               return model.layerPremium * (model.beforeParticipationPercentage/100);
+	               return model.layer.layerPremium * (model.layer.beforeParticipationPercentage/100);
 	           }
 	           
 	           function getAfterGrossPremium() {
@@ -31122,31 +31796,31 @@
 	           }
 	           
 	           function getReinsurerGrossPremium() {
-	               return getBeforeGrossPremium() * (model.reinsurerParticipationPercentage/100);
+	               return getBeforeGrossPremium() * (model.layer.reinsurerParticipationPercentage/100);
 	           }
 	           
 	           function getBeforeParticipationPercentage() {
-	               return model.beforeParticipationPercentage;
+	               return model.layer.beforeParticipationPercentage;
 	           }
 	           
 	           function getAfterParticipationPercentage() {
-	               var aux = model.beforeParticipationPercentage * (model.reinsurerParticipationPercentage/100);
-	               return model.beforeParticipationPercentage - aux;
+	               var aux = model.layer.beforeParticipationPercentage * (model.layer.reinsurerParticipationPercentage/100);
+	               return model.layer.beforeParticipationPercentage - aux;
 	           }
 	           
 	           function getCedeFeeInAmount() {
-	               return model.getReinsurerNetPremium() * (model.cedeFeePercentage / 100);
+	               return getReinsurerNetPremium() * (model.layer.cedeFeePercentage / 100);
 	           }
 	           
 	           function getCedeFee() {
-	               if(getReinsurerGrossPremium() === 0.0){
+	               if(getReinsurerGrossPremium() === 0.0 ){
 	                   return 0;
 	               }
 	               return getCedeFeeInAmount()/getReinsurerGrossPremium()*100;
 	           }
 	           
 	           function getBeforeLimit() {
-	               return model.layerLimit * (model.beforeParticipationPercentage/100);
+	               return model.layer.layerLimit * (model.layer.beforeParticipationPercentage/100);
 	           }
 	           
 	           function getAfterLimit() {
@@ -31158,7 +31832,7 @@
 	           }
 	           
 	           function getBeforeNetPremium() {
-	               return model.getBeforeGrossPremium() * (1 - (model.beforeBrokerCommissionPercentage/100));
+	               return getBeforeGrossPremium() * (1 - (model.layer.beforeBrokerCommissionPercentage/100));
 	           }
 	           
 	           function getAfterNetPremium() {
@@ -31166,83 +31840,56 @@
 	           }
 	           
 	           function getReinsurerNetPremium() {
-	               return getReinsurerGrossPremium() * (1 - (getReinsurerBrokerCommissionPercentage()/100));
+	               return getBeforeNetPremium() * (getReinsurerParticipationPercentage()/100);
 	           }
-	       }
-	   });
+	   }
 	}
 
 /***/ },
-/* 5 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(app) {
 	    'use strict';
 	    
 	    app.component("beforeAfterFacout",{
-	       template: __webpack_require__(6),
+	       template: __webpack_require__(9),
 	       bindings: {
-	           parent: '<'
+	           tri: '<',
+	           parent: '='
 	       },
 	       controllerAs: 'model'
 	   });   
 	}
 
 /***/ },
-/* 6 */
+/* 9 */
 /***/ function(module, exports) {
 
-	module.exports = "<table class=\"table\">\r\n    <thead>\r\n        <th>&nbsp;</th>\r\n        <th>HCC before Fac Out</th>\r\n        <th>Reinsurer</th>\r\n        <th>HCC after Fac Out</th>\r\n    </thead>\r\n    <tbody>\r\n        <tr>\r\n            <td>Participation %</td>\r\n            <td><input type=\"text\" ui-number-mask=\"4\" ng-model=\"model.parent.beforeParticipationPercentage\"></td>\r\n            <td><input type=\"text\" ui-number-mask=\"4\" ng-model=\"model.parent.reinsurerParticipationPercentage\"></td>\r\n            <td><span class=\"number\">{{model.parent.getAfterParticipationPercentage() | number}}</span></td>\r\n        </tr>\r\n        <tr>\r\n            <td>Limit</td>\r\n            <td><span class=\"number\">{{model.parent.getBeforeLimit() | number}}</span></td>\r\n            <td><span class=\"number\">{{model.parent.getReinsurerLimit() | number}}</span></td>\r\n            <td><span class=\"number\">{{model.parent.getAfterLimit() | number}}</span></td>\r\n        </tr>\r\n        <tr>\r\n            <td>Gross Premium</td>\r\n            <td><span class=\"number\">{{model.parent.getBeforeGrossPremium() | number}}</span></td>\r\n            <td><span class=\"number\">{{model.parent.getReinsurerGrossPremium() | number}}</span></td>\r\n            <td><span class=\"number\">{{model.parent.getAfterGrossPremium() | number}}</span></td>\r\n        </tr>\r\n        <tr>\r\n            <td>Broker Commission %</td>\r\n            <td><input type=\"text\" ui-number-mask=\"4\" ng-model=\"model.parent.beforeBrokerCommissionPercentage\"></td>\r\n            <td><span class=\"number\">{{model.parent.getReinsurerBrokerCommissionPercentage() | number}}</span></td>\r\n            <td><span class=\"number\">{{model.parent.getAfterBrokerCommissionPercentage() | number}}</span></td>\r\n        </tr>\r\n        <tr>\r\n            <td>Net Premium</td>\r\n            <td><span class=\"number\">{{model.parent.getBeforeNetPremium() | number}}</span></td>\r\n            <td><span class=\"number\">{{model.parent.getReinsurerNetPremium() | number}}</span></td>\r\n            <td><span class=\"number\">{{model.parent.getAfterNetPremium() | number}}</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.parent.tri === false\">\r\n            <td>Taxes</td>\r\n            <td><input type=\"text\" ui-number-mask=\"2\" ng-model=\"model.parent.beforeTaxes\" class=\"decimals-2\"></td>\r\n            <td><span class=\"number\">N/A</span></td>\r\n            <td><span class=\"number\">{{model.parent.getAfterTaxes()| number }}</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.parent.tri === true\">\r\n            <td>WHT</td>\r\n            <td><input class=\"decimals-2\" type=\"text\" ng-model=\"model.parent.beforeTriWht\" ui-number-mask=\"2\"></td>\r\n            <td><span class=\"number\">{{model.parent.getReinsurerWHT() | number}}</span></td>\r\n            <td><span class=\"number color-2\">{{model.parent.getAfterWHT() | number}}</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.parent.tri === true\">\r\n            <td>Admin Fee</td>\r\n            <td><input class=\"decimals-2\" type=\"text\" ng-model=\"model.parent.beforeTriAdminFee\" ui-number-mask=\"2\"></td>\r\n            <td><span class=\"number\">{{model.parent.getReinsurerAdminFee() | number}}</span></td>\r\n            <td><span class=\"number color-1\">{{model.parent.getAfterAdminFee() | number}}</span></td>\r\n        </tr>\r\n    </tbody>\r\n</table>"
+	module.exports = "<table class=\"uk-table uk-table-condensed uk-table-noborder\">\r\n    <thead>\r\n        <th>&nbsp;</th>\r\n        <th>HCC before Fac Out</th>\r\n        <th>Reinsurer</th>\r\n        <th>HCC after Fac Out</th>\r\n    </thead>\r\n    <tbody>\r\n        <tr>\r\n            <td>Participation %</td>\r\n            <td><input placeholder=\"%\" type=\"text\" fcsa-number=\"{ maxDecimals: 4,preventInvalidInput: true,append:'%' }\" ng-model=\"model.parent.layer.beforeParticipationPercentage\"></td>\r\n            <td class=\"foc-yellow\"><input placeholder=\"%\" type=\"text\" fcsa-number=\"{ maxDecimals: 4,preventInvalidInput: true,append:'%' }\" ng-model=\"model.parent.layer.reinsurerParticipationPercentage\"></td>\r\n            <td class=\"foc-green\"><span class=\"number\">{{model.parent.getAfterParticipationPercentage() | number}}%</span></td>\r\n        </tr>\r\n        <tr>\r\n            <td>Limit</td>\r\n            <td><span class=\"number\">{{model.parent.getBeforeLimit() | number}}</span></td>\r\n            <td class=\"foc-yellow\"><span class=\"number\">{{model.parent.getReinsurerLimit() | number}}</span></td>\r\n            <td class=\"foc-green\"><span class=\"number\">{{model.parent.getAfterLimit() | number}}</span></td>\r\n        </tr>\r\n        <tr>\r\n            <td>Gross Premium</td>\r\n            <td><span class=\"number\">{{model.parent.getBeforeGrossPremium() | number}}</span></td>\r\n            <td class=\"foc-yellow\"><span class=\"number\">{{model.parent.getReinsurerGrossPremium() | number}}</span></td>\r\n            <td class=\"foc-green\"><span class=\"number\">{{model.parent.getAfterGrossPremium() | number}}</span></td>\r\n        </tr>\r\n        <tr>\r\n            <td>Broker Commission %</td>\r\n            <td class=\"foc-blue\"><input placeholder=\"%\" type=\"text\" fcsa-number=\"{ maxDecimals: 4,preventInvalidInput: true,append:'%' }\" ng-model=\"model.parent.layer.beforeBrokerCommissionPercentage\"></td>\r\n            <td><span class=\"number\">{{model.parent.getReinsurerBrokerCommissionPercentage() | number}}%</span></td>\r\n            <td class=\"foc-green\"><span class=\"number\">{{model.parent.getAfterBrokerCommissionPercentage() | number}}%</span></td>\r\n        </tr>\r\n        <tr>\r\n            <td>Net Premium</td>\r\n            <td><span class=\"number\">{{model.parent.getBeforeNetPremium() | number}}</span></td>\r\n            <td><span class=\"number\">{{model.parent.getReinsurerNetPremium() | number}}</span></td>\r\n            <td><span class=\"number\">{{model.parent.getAfterNetPremium() | number}}</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.tri === false\">\r\n            <td>Taxes</td>\r\n            <td><input type=\"text\" fcsa-number ng-model=\"model.parent.layer.beforeTaxes\" class=\"decimals-2\"></td>\r\n            <td><span class=\"number\">N/A</span></td>\r\n            <td class=\"foc-green\"><span class=\"number\">{{model.parent.getAfterTaxes()| number }}</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.tri === true\">\r\n            <td>WHT</td>\r\n            <td><input class=\"decimals-2\" type=\"text\" ng-model=\"model.parent.layer.beforeTriWht\" fcsa-number></td>\r\n            <td><span class=\"number\">{{model.parent.getReinsurerWHT() | number}}</span></td>\r\n            <td class=\"foc-green\"><span class=\"number\">{{model.parent.getAfterWHT() | number}}</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.tri === true\">\r\n            <td>Admin Fee</td>\r\n            <td><input class=\"decimals-2\" type=\"text\" ng-model=\"model.parent.layer.beforeTriAdminFee\" fcsa-number></td>\r\n            <td><span class=\"number\">{{model.parent.getReinsurerAdminFee() | number}}</span></td>\r\n            <td class=\"foc-blue\"><span class=\"number\">{{model.parent.getAfterAdminFee() | number}}</span></td>\r\n        </tr>\r\n    </tbody>\r\n</table>"
 
 /***/ },
-/* 7 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function(app) {
 	    'use strict';
 	    
 	    app.component("cedeFees",{
-	       template: __webpack_require__(8),
+	       template: __webpack_require__(11),
 	       bindings: {
-	           parent: '<'
+	           tri: '<',
+	           parent: '='
 	       },
 	       controllerAs: 'model'
 	   });   
 	}
-
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	module.exports = "<table class=\"table\">\r\n    <thead>\r\n        <th>&nbsp;</th>\r\n        <th>Cede Fees</th>\r\n    </thead>\r\n    <tbody>\r\n        <tr>\r\n            <td>Cede Fee %</td>\r\n            <td><input type=\"text\" ui-number-mask=\"4\" ng-model=\"model.parent.cedeFeePercentage\"></td>\r\n        </tr>\r\n        <tr ng-show=\"model.parent.tri === false\">\r\n            <td>Cede Fee in Amount</td>\r\n            <td><span class=\"number\">{{model.parent.getCedeFeeInAmount() | number}}</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.parent.tri === false\">\r\n            <td>Cede Fee</td>\r\n            <td><span class=\"number\">{{model.parent.getCedeFee() | number}}</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.parent.tri === true\">\r\n            <td>Cede Fee including legal fees and WHT</td>\r\n            <td><span class=\"number color-1\">{{model.parent.getTriCedeFeeIncludingLegalFeesAndWht() | number}}</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.parent.tri === true\">\r\n            <td>Ceded Premium Pass Thru</td>\r\n            <td><span class=\"number color-1\">{{model.parent.getTriCedePremiumPassThru() | number}}</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.parent.tri === true\">\r\n            <td>Reinsurer's Payment</td>\r\n            <td><span class=\"number color-1\">{{model.parent.getTriReinsurerPayment() | number}}</span></td>\r\n        </tr>\r\n    </tbody>\r\n</table>"
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = function(app) {
-	    'use strict';
-	    
-	    app.component("layerDetails",{
-	       template: __webpack_require__(10),
-	       bindings: {
-	           parent: '<'
-	       },
-	       controllerAs: 'model'
-	   });   
-	}
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	module.exports = "<table class=\"table\">\r\n    <thead>\r\n        <th>&nbsp;</th>\r\n        <th>Layer Details</th>\r\n    </thead>\r\n    <tbody>\r\n        <tr>\r\n            <td>Layer Limit</td>\r\n            <td><input type=\"text\" ui-number-mask=\"0\" ng-model=\"model.parent.layerLimit\"></td>\r\n        </tr>\r\n        <tr>\r\n            <td>Layer Premium</td>\r\n            <td><input type=\"text\" ui-number-mask=\"0\" ng-model=\"model.parent.layerPremium\"></td>\r\n        </tr>\r\n        <tr>\r\n            <td>Underlying Limit</td>\r\n            <td><input type=\"text\" ui-number-mask=\"0\" ng-model=\"model.parent.underlyingLimit\"></td>\r\n        </tr>\r\n    </tbody>\r\n</table>"
 
 /***/ },
 /* 11 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"container-fluid facout-layer\">\r\n    <div class=\"row\">\r\n        <div class=\"col-md-11 col-sm-11\"></div>\r\n        <div class=\"col-md-1 col-sm-1\">\r\n            <span class=\"glyphicon glyphicon-trash\" ng-click=\"model.onDelete()\" ></span>\r\n        </div>\r\n    </div>\r\n    <div class=\"row\">\r\n        <div class=\"col-md-6 col-sm-6\">\r\n            <layer-details parent=\"model\"></layer-details>\r\n        </div>\r\n        <div class=\"col-md-6 col-sm-6\">\r\n            <cede-fees parent=\"model\"></cede-fees>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div class=\"col-md-12\">\r\n            <before-after-facout parent=\"model\"></before-after-facout>\r\n        </div>\r\n    </div>\r\n</div>"
+	module.exports = "<style>\r\n        .cede-fees div.small {\r\n            font-size: 10px;\r\n        }\r\n        i.uk-icon-info-circle{\r\n            color: darkblue;\r\n            cursor: help;\r\n            font-size: 14px;\r\n        }\r\n</style>\r\n\r\n<table class=\"uk-table uk-table-condensed uk-table-noborder cede-fees\">\r\n    <thead>\r\n        <th>&nbsp;</th>\r\n        <th>Cede Fees</th>\r\n    </thead>\r\n    <tbody>\r\n        <tr>\r\n            <td>Cede Fee %</td>\r\n            <td><input placeholder=\"%\" type=\"text\" fcsa-number=\"{ maxDecimals: 4,preventInvalidInput: true,append:'%' }\" ng-model=\"model.parent.layer.cedeFeePercentage\"></td>\r\n        </tr>\r\n        <tr ng-show=\"model.tri === false\">\r\n            <td>Cede Fee in Amount</td>\r\n            <td class=\"foc-blue\"><span class=\"number\">{{model.parent.getCedeFeeInAmount() | number}}</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.tri === false\">\r\n            <td><div>Cede Fee %</div><div class=\"small\">as % of Gross Reinsurance Premium <i class=\"uk-icon-info-circle\" title=\"Info for reinsurer only\"><i></div></td>\r\n            <td><span class=\"number\">{{model.parent.getCedeFee() | number}}%</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.tri === true\">\r\n            <td>Cede Fee including legal fees and WHT</td>\r\n            <td class=\"foc-blue\"><span class=\"number\">{{model.parent.getTriCedeFeeIncludingLegalFeesAndWht() | number}}</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.tri === true\">\r\n            <td>Ceded Premium Pass Thru</td>\r\n            <td class=\"foc-blue\"><span class=\"number\">{{model.parent.getTriCedePremiumPassThru() | number}}</span></td>\r\n        </tr>\r\n        <tr ng-show=\"model.tri === true\">\r\n            <td>Reinsurer's Payment</td>\r\n            <td><span class=\"number\">{{model.parent.getTriReinsurerPayment() | number}}</span></td>\r\n        </tr>\r\n    </tbody>\r\n</table>"
 
 /***/ },
 /* 12 */
@@ -31251,10 +31898,39 @@
 	module.exports = function(app) {
 	    'use strict';
 	    
-	    app.component("quote",{
+	    app.component("layerDetails",{
 	       template: __webpack_require__(13),
 	       bindings: {
-	           parent: '<'
+	           tri: '<',
+	           parent: '='
+	       },
+	       controllerAs: 'model'
+	   });   
+	}
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	module.exports = "<table class=\"uk-table uk-table-condensed uk-table-noborder\">\r\n    <thead>\r\n        <th>&nbsp;</th>\r\n        <th>Layer Details</th>\r\n    </thead>\r\n    <tbody>\r\n        <tr>\r\n            <td>Layer Limit</td>\r\n            <td class=\"foc-green\"><input type=\"text\" fcsa-number ng-model=\"model.parent.layer.layerLimit\"></td>\r\n        </tr>\r\n        <tr>\r\n            <td>Layer Premium</td>\r\n            <td class=\"foc-green\"><input type=\"text\" fcsa-number ng-model=\"model.parent.layer.layerPremium\"></td>\r\n        </tr>\r\n        <tr>\r\n            <td>Underlying Limit</td>\r\n            <td class=\"foc-green\"><input type=\"text\" fcsa-number ng-model=\"model.parent.layer.underlyingLimit\"></td>\r\n        </tr>\r\n    </tbody>\r\n</table>"
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	module.exports = "<style>\r\n    .facout-layer {\r\n        border: 1px solid #ccc;\r\n        margin: 8px 0px !important;\r\n    }\r\n    .facout-layer span.uk-icon-trash {\r\n        cursor: pointer;\r\n    }\r\n    .facout-layer input{\r\n        text-align: right;\r\n    }\r\n    .facout-layer span.number{\r\n        text-align: right;\r\n        display: inline-block;\r\n        width: 142px;\r\n        padding: 4px;\r\n    }\r\n    .facout-layer .cede-fees > div {\r\n        float:left;\r\n    }\r\n    .facout-layer .cede-fees > div:first-child {\r\n        margin-right: 10px;\r\n    }\r\n</style>\r\n\r\n<div class=\"uk-grid facout-layer\">\r\n    <div class=\"uk-width-1-1\">\r\n        <div class=\"uk-grid\">\r\n            <div class=\"uk-width-9-10\">\r\n                &nbsp;\r\n            </div>\r\n            <div class=\"uk-width-1-10\">\r\n                <span class=\"uk-button uk-button-mini\" title=\"remove layer\" ng-click=\"model.onDelete()\">\r\n                    <span class=\"uk-icon-trash\" ></span>\r\n                </span>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"uk-width-1-1 cede-fees\">\r\n        <div>\r\n            <layer-details tri=\"model.tri\" parent=\"model\"></layer-details>\r\n        </div>\r\n        <div>\r\n            <cede-fees tri=\"model.tri\" parent=\"model\"></cede-fees>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"uk-width-1-1\">\r\n            <before-after-facout tri=\"model.tri\" parent=\"model\"></before-after-facout>\r\n    </div>\r\n\r\n    <div class=\"uk-width-1-1\">\r\n        <div class=\"foc-green foc-box\" style=\"display: block;\">Quote Detail Screen</div>\r\n        <div class=\"foc-blue foc-box\" style=\"display: block;\">Invoicing Screen</div>\r\n        <div class=\"foc-yellow foc-box\" style=\"display: block;\">Reinsurance Screen</div>\r\n    </div>\r\n</div>"
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = function(app) {
+	    'use strict';
+	    
+	    app.component("quote",{
+	       template: __webpack_require__(16),
+	       bindings: {
+	           parent: '='
 	       },
 	       controllerAs: 'model',
 	       controller: ['$http',controller]
@@ -31268,35 +31944,113 @@
 	           model.lob;
 	           model.brokerName;
 	           model.uw;
-	           
-	           model.search = search;
+
+	            model.button = 'NO-TRI';
+
+	            model.toggleButton = toggleButton;
+	            model.reset = reset;
+	            model.search = search;
 	           
 	           function search() {
 	               
 	            $http({
 	                method: 'GET',
-	                url: 'http://infobase/1.1/api_protected_entity/retrieve?format=json&class=submission&id='+model.quoteid+'&relations%5B%5D=broker'
+	                url: 'http://hgbn-test01/infobase/1.1/api_protected_entity/retrieve?format=json&class=submission&id='+model.quoteid+'&relations%5B%5D=broker'
 	                }).then(function successCallback(response) {
-	                    console.log(response.data);
+	                    model.insuredName = response.data.retrieve.insuredName;
+	                    model.lob = response.data.retrieve.lob;
+	                    if(model.lob.toLowerCase().match(/tri*/) === 'tri') {
+	                        model.parent.tri = true;
+	                    }
+	                    model.brokerName = response.data.retrieve.relations.broker.name;
+	                    model.uw = response.data.retrieve.underwriterId;
 	                }, function errorCallback(response) {
-	                    alert('Error, see console log');
+	                    alert('The webservice is not available. Check the console.log');
 	                    console.log(response);
 	                });
-	           }   
+	           }
+
+	            function toggleButton() {
+	                if(model.button === 'NO-TRI'){
+	                    model.button = 'TRI';
+	                    model.parent.tri = true;
+	                }else{
+	                    model.button = 'NO-TRI';
+	                    model.parent.tri = false;
+	                }
+	            }
+
+	            function reset() {
+	                model.quoteid = undefined;
+	                model.insuredName = undefined;
+	                model.lob = undefined;
+	                model.brokerName = undefined;
+	                model.uw = undefined;
+	            }
 	       }
 	}
 
 /***/ },
-/* 13 */
+/* 16 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"container-fluid\">\r\n    <div class=\"row\">\r\n        <div class=\"col-xs-12\">\r\n            <table class=\"table\">\r\n    <tr>\r\n        <td>QuoteID</td>\r\n        <td><form class=\"form-inline\">\r\n            <div class=\"form-group\">\r\n                <input type=\"text\" class=\"form-control\" ng-model=\"model.quoteid\">\r\n            </div>\r\n            <button class=\"btn btn-default btn-sm\" placeholder=\"Quote ID\" ng-click=\"model.search()\">Search</button>\r\n        </form></td>\r\n    </tr>\r\n    <tr>\r\n        <td>Insured Name</td>\r\n        <td>{{model.insuredName}}</td>\r\n    </tr>\r\n    <tr>\r\n        <td>LOB</td>\r\n        <td>{{model.lob}}</td>\r\n    </tr>\r\n    <tr>\r\n        <td>Broker Name</td>\r\n        <td>{{model.brokerName}}</td>\r\n    </tr>\r\n    <tr>\r\n        <td>UW</td>\r\n        <td>{{model.uw}}</td>\r\n    </tr>\r\n</table>            \r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n"
+	module.exports = "<style>\r\n    #quoteid-input {\r\n        float:left;\r\n    }\r\n    table#facout-calculator-table td{\r\n        padding:6px;\r\n    }\r\n    table#facout-calculator-table td:first-child{\r\n        color: #000;\r\n    }\r\n</style>\r\n\r\n<div class=\"container-fluid\">\r\n    <div class=\"row\">\r\n        <div class=\"col-xs-12\">\r\n            <table id=\"facout-calculator-table\">\r\n    <tr>\r\n        <td>QuoteID</td>\r\n        <td><form class=\"form-inline\">\r\n            <div class=\"form-group\" id=\"quoteid-input\">\r\n                <input type=\"text\" class=\"form-control\" ng-model=\"model.quoteid\" placeholder=\"Quote ID\">\r\n            </div>\r\n            <button class=\"btn btn-default btn-sm\" ng-click=\"model.search()\">Search</button>\r\n            <button class=\"btn btn-default btn-sm\" ng-show=\"model.insuredName !== undefined\" ng-click=\"model.reset()\">Reset</button>\r\n        </form></td>\r\n    </tr>\r\n    <tr>\r\n        <td>Insured Name</td>\r\n        <td>{{model.insuredName}}</td>\r\n    </tr>\r\n    <tr>\r\n        <td>LOB</td>\r\n        <td>\r\n            <span ng-show=\"model.lob === undefined\">\r\n            <button ng-click=\"model.toggleButton()\" class=\"uk-button uk-button-small\">{{model.button}}</button>\r\n            </span>\r\n            <span ng-show=\"model.lob !== undefined\">{{model.lob}}\r\n            </span>\r\n        </td>\r\n    </tr>\r\n    <tr>\r\n        <td>Broker Name</td>\r\n        <td>{{model.brokerName}}</td>\r\n    </tr>\r\n    <tr>\r\n        <td>UW</td>\r\n        <td>{{model.uw}}</td>\r\n    </tr>\r\n</table>            \r\n        </div>\r\n    </div>\r\n</div>\r\n\r\n"
 
 /***/ },
-/* 14 */
+/* 17 */
 /***/ function(module, exports) {
 
-	module.exports = "<div class=\"container-fluid facout-calculator\" id=\"facout-calculator\">\r\n    \r\n    <div class=\"row\">\r\n        <div class=\"col-xs-12\">\r\n            <quote parent=\"model\"></quote>        \r\n        </div>\r\n    </div>\r\n    \r\n    <div class=\"row\" ng-repeat=\"layerId in model.howMany\">\r\n        <div class=\"col-xs-12\">\r\n            <facout-layer layer-id=\"layerId\" tri=\"model.tri\" on-delete=\"model.removeLayer()\"></facout-layer>        \r\n        </div>\r\n    </div>\r\n    \r\n    <div class=\"row\">\r\n        <div class=\"col-xs-12\">\r\n            <button class=\"btn btn-default btn-sm\" ng-click=\"model.addLayer()\">Add Layer</button>        \r\n        </div>\r\n    </div>\r\n        \r\n</div>"
+	module.exports = function (app) {
+	    'use strict';
+
+	    app.value('facOut', facOut);
+
+	    function facOut() {
+
+	        var model = this;
+
+	        model.beforeTriWht = 0;
+	        model.beforeTriAdminFee = 0;
+
+	        /* layer details */
+	        model.layerLimit = 0;
+	        model.layerPremium = 0;
+	        model.underlyingLimit = 0;
+	        /* cede fees */
+	        model.cedeFeePercentage = 0;
+	        // model.cedeFeeInAmount, computed value
+	        // model.cedeFee, computed value
+	        /*  Before Fac Out */
+	        model.beforeParticipationPercentage = 0;
+	        // model.beforeLimit, computed value
+	        // model.beforeGrossPremium, computed value
+	        model.beforeBrokerCommissionPercentage = 0;
+	        // model.beforeNetPremium, computed value
+	        model.beforeTaxes = 0;
+	        /* Reinsurer */
+	        model.reinsurerParticipationPercentage = 0;
+	        // model.reinsurerLimit, computed value
+	        // model.reinsurerGrossPremium, computed value
+	        // model.reinsurerBrokerCommissionPercentage, computed value
+	        // model.reinsurerNetPremium, computed value
+	        // model.reinsurerNetPremium, computed value
+	        // model.reinsurerTaxes = 'N/A';
+	        /*  After Fa Out */
+	        // model.afterParticipationPercentage, computed value
+	        // model.afterLimit, computed value
+	        // model.afterGrossPremium, computed value
+	        // model.afterBrokerCommissionPercentage, computed value
+	        // model.afterNetPremium, computed value
+	        // model.afterTaxes, computed value
+	        
+	     }
+	}
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	module.exports = "<style>\r\n    input.ng-invalid {\r\n        background-color: darkred;\r\n        color: #fff;\r\n    }\r\n</style>\r\n\r\n<div class=\"container-fluid facout-calculator\" id=\"facout-calculator\">\r\n    \r\n    <div class=\"row\">\r\n        <div class=\"col-xs-12\">\r\n            <quote parent=\"model\"></quote>        \r\n        </div>\r\n    </div>\r\n    \r\n    <div class=\"row\">\r\n        <div class=\"col-xs-12\">\r\n            <button class=\"btn btn-default btn sm\" ng-click=\"model.loadMaranello()\">Load Maranello</button>\r\n            \r\n            <fieldset style=\"display:inline-block\" ng-if=\"model.existingLayers.length > 0\">\r\n                <button class=\"btn btn-default btn sm\" ng-click=\"model.loading = true\" ng-show=\"!model.loading\">Load Saved Layers</button>\r\n                <select ng-model=\"model.toLoad\" ng-show=\"model.loading\">\r\n                    <option ng-repeat=\"saved in model.existingLayers track by $index\" value=\"{{$index}}\">{{saved.name}}</option>\r\n                </select>\r\n                <button class=\"btn btn-default btn sm\" ng-click=\"model.loadLayers()\" ng-show=\"model.loading\">Load</button>\r\n                <button class=\"btn btn-default btn sm\" ng-click=\"model.deleteLayers()\" ng-show=\"model.loading\">Delete</button>\r\n                <button class=\"btn btn-default btn sm\" ng-click=\"model.loading = false\" ng-show=\"model.loading\">Cancel</button>\r\n            </fieldset>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\" ng-repeat=\"layer in model.layers track by $index\">\r\n        <div class=\"col-xs-12\">\r\n            <facout-layer layer=\"layer\" tri=\"model.tri\" on-delete=\"model.removeLayer()\"></facout-layer>        \r\n        </div>\r\n    </div>\r\n    \r\n    <div class=\"row\">\r\n        <div class=\"col-xs-12\">\r\n            <button class=\"btn btn-default btn-sm\" ng-click=\"model.addLayer()\">Add Layer</button>\r\n            \r\n            <fieldset ng-show=\"model.layers.length > 0\">\r\n                <button class=\"btn btn-default btn sm\" ng-click=\"model.saving = true\" ng-show=\"!model.saving\">Save Layers</button>\r\n                <input type=\"text\" ng-model=\"model.layersName\" placeholder=\"Layers Name\" ng-show=\"model.saving\">\r\n                <button class=\"btn btn-default btn sm\" ng-click=\"model.saveLayers()\" ng-show=\"model.saving\">Save</button>\r\n                <button class=\"btn btn-default btn sm\" ng-click=\"model.saving = false\" ng-show=\"model.saving\">Cancel</button>\r\n            </fieldset>\r\n        </div>\r\n    </div>\r\n        \r\n</div>"
 
 /***/ }
 /******/ ]);
