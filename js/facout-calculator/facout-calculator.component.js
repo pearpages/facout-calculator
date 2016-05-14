@@ -26,12 +26,21 @@ module.exports = function(app) {
            model.loadMaranello = loadMaranello;
            model.loadLayers = loadLayers;
            model.deleteLayers = deleteLayers;
+           model.printLayers = printLayers;
            
            model.$onInit = function () {
                loadLocalStorage();
                if(model.existingLayers.length > 0){
                    model.toLoad = "0";
                }
+           }
+           
+           function printLayers() {
+               var printContents = document.getElementById('facout-calculator').innerHTML;
+                var popupWin = window.open('', '_blank');
+                popupWin.document.open();
+                popupWin.document.write('<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()">' + printContents + '</body></html>');
+                popupWin.document.close();
            }
            
            function addLayer() {
