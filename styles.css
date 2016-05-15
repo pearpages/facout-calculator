@@ -1,0 +1,12 @@
+body{
+    background-color: #eee;
+}
+facout-calculator#facout-calculator table td,
+facout-calculator#facout-calculator table th {
+    font-size: 10px !important;
+}
+fieldset { border: none;}
+div.foc-box{
+    display:block;
+    float:right;
+}
