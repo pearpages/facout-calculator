@@ -31651,6 +31651,7 @@
 	           
 	           function addLayer() {
 	               model.layers.push(new facOut());
+	               model.toLoad = "0";
 	           }
 	           
 	           function loadLocalStorage() {

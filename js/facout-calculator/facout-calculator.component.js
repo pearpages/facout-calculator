@@ -52,6 +52,7 @@ module.exports = function(app) {
            
            function addLayer() {
                model.layers.push(new facOut());
+               model.toLoad = "0";
            }
            
            function loadLocalStorage() {
