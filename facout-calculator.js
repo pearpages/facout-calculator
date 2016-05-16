@@ -31635,10 +31635,17 @@
 	           }
 	           
 	           function printLayers() {
-	               var printContents = document.getElementById('facout-calculator').innerHTML;
+	               var copy = document.getElementById('facout-calculator').cloneNode(true);
+	               var buttons = [].slice.call(copy.getElementsByTagName('button'));
+
+	               for(var i = 0; i < buttons.length; ++i) {
+	                   buttons[i].parentNode.removeChild(buttons[i]);
+	               }
+	               
+	               var printContents = copy.innerHTML;
 	                var popupWin = window.open('', '_blank');
 	                popupWin.document.open();
-	                popupWin.document.write('<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()">' + printContents + '</body></html>');
+	                popupWin.document.write('<html><head><link rel="stylesheet" type="text/css" href="styles.css" /></head><body onload="window.print()">' + printContents + '</body></html>');
 	                popupWin.document.close();
 	           }
 	           
