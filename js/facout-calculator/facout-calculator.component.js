@@ -23,7 +23,7 @@ module.exports = function(app) {
            model.saveLayers = saveLayers;
            model.addLayer = addLayer;
            model.removeLayer = removeLayer;
-           model.loadMaranello = loadMaranello;
+           model.loadExample = loadExample;
            model.loadLayers = loadLayers;
            model.deleteLayers = deleteLayers;
            model.printLayers = printLayers;
@@ -76,7 +76,7 @@ module.exports = function(app) {
                }
            }
            
-           function loadMaranello() {
+           function loadExample() {
                model.layers = [];
                model.layers.push(new facOut());
                

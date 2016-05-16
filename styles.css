@@ -1,12 +1,28 @@
 body{
     background-color: #eee;
 }
+.container-fluid{
+    background-color: #fff;
+    padding:10px;
+}
 facout-calculator#facout-calculator table td,
 facout-calculator#facout-calculator table th {
     font-size: 10px !important;
 }
 fieldset { border: none;}
+.foc-green{
+    background-color:green;
+}
+.foc-yellow{
+    background-color:yellow;
+}
+.foc-blue{
+    background-color:blue;
+}
 div.foc-box{
     display:block;
     float:right;
+    font-size:10px;
+    padding:4px;
+    margin-right:4px;
 }
