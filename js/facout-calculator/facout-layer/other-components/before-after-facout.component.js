@@ -4,7 +4,8 @@ module.exports = function(app) {
     app.component("beforeAfterFacout",{
        template: require('./before-after-facout.component.html'),
        bindings: {
-           parent: '<'
+           tri: '<',
+           parent: '='
        },
        controllerAs: 'model'
    });   

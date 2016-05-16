@@ -1,14 +1,27 @@
+<style>
+    #quoteid-input {
+        float:left;
+    }
+    table#facout-calculator-table td{
+        padding:6px;
+    }
+    table#facout-calculator-table td:first-child{
+        color: #000;
+    }
+</style>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-xs-12">
-            <table class="table">
+            <table id="facout-calculator-table">
     <tr>
         <td>QuoteID</td>
         <td><form class="form-inline">
-            <div class="form-group">
-                <input type="text" class="form-control" ng-model="model.quoteid">
+            <div class="form-group" id="quoteid-input">
+                <input type="text" class="form-control" ng-model="model.quoteid" placeholder="Quote ID">
             </div>
-            <button class="btn btn-default btn-sm" placeholder="Quote ID" ng-click="model.search()">Search</button>
+            <button class="btn btn-default btn-sm" ng-click="model.search()">Search</button>
+            <button class="btn btn-default btn-sm" ng-show="model.insuredName !== undefined" ng-click="model.reset()">Reset</button>
         </form></td>
     </tr>
     <tr>
@@ -17,7 +30,13 @@
     </tr>
     <tr>
         <td>LOB</td>
-        <td>{{model.lob}}</td>
+        <td>
+            <span ng-show="model.lob === undefined">
+            <button ng-click="model.toggleButton()" class="uk-button uk-button-small">{{model.button}}</button>
+            </span>
+            <span ng-show="model.lob !== undefined">{{model.lob}}
+            </span>
+        </td>
     </tr>
     <tr>
         <td>Broker Name</td>

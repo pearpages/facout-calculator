@@ -4,7 +4,8 @@ module.exports = function(app) {
     app.component("cedeFees",{
        template: require('./cede-fees.component.html'),
        bindings: {
-           parent: '<'
+           tri: '<',
+           parent: '='
        },
        controllerAs: 'model'
    });   

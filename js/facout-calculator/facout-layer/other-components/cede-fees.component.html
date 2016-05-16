@@ -1,4 +1,15 @@
-<table class="table">
+<style>
+        .cede-fees div.small {
+            font-size: 10px;
+        }
+        i.uk-icon-info-circle{
+            color: darkblue;
+            cursor: help;
+            font-size: 14px;
+        }
+</style>
+
+<table class="uk-table uk-table-condensed uk-table-noborder cede-fees">
     <thead>
         <th>&nbsp;</th>
         <th>Cede Fees</th>
@@ -6,27 +17,27 @@
     <tbody>
         <tr>
             <td>Cede Fee %</td>
-            <td><input type="text" ui-number-mask="4" ng-model="model.parent.cedeFeePercentage"></td>
+            <td><input placeholder="%" type="text" fcsa-number="{ maxDecimals: 4,preventInvalidInput: true,append:'%' }" ng-model="model.parent.layer.cedeFeePercentage"></td>
         </tr>
-        <tr ng-show="model.parent.tri === false">
+        <tr ng-show="model.tri === false">
             <td>Cede Fee in Amount</td>
-            <td><span class="number">{{model.parent.getCedeFeeInAmount() | number}}</span></td>
+            <td class="foc-blue"><span class="number">{{model.parent.getCedeFeeInAmount() | number}}</span></td>
         </tr>
-        <tr ng-show="model.parent.tri === false">
-            <td>Cede Fee</td>
-            <td><span class="number">{{model.parent.getCedeFee() | number}}</span></td>
+        <tr ng-show="model.tri === false">
+            <td><div>Cede Fee %</div><div class="small">as % of Gross Reinsurance Premium <i class="uk-icon-info-circle" style="cursor:help" title="Info for reinsurer only"><i></div></td>
+            <td><span class="number">{{model.parent.getCedeFee() | number}}%</span></td>
         </tr>
-        <tr ng-show="model.parent.tri === true">
+        <tr ng-show="model.tri === true">
             <td>Cede Fee including legal fees and WHT</td>
-            <td><span class="number color-1">{{model.parent.getTriCedeFeeIncludingLegalFeesAndWht() | number}}</span></td>
+            <td class="foc-blue"><span class="number">{{model.parent.getTriCedeFeeIncludingLegalFeesAndWht() | number}}</span></td>
         </tr>
-        <tr ng-show="model.parent.tri === true">
+        <tr ng-show="model.tri === true">
             <td>Ceded Premium Pass Thru</td>
-            <td><span class="number color-1">{{model.parent.getTriCedePremiumPassThru() | number}}</span></td>
+            <td class="foc-blue"><span class="number">{{model.parent.getTriCedePremiumPassThru() | number}}</span></td>
         </tr>
-        <tr ng-show="model.parent.tri === true">
+        <tr ng-show="model.tri === true">
             <td>Reinsurer's Payment</td>
-            <td><span class="number color-1">{{model.parent.getTriReinsurerPayment() | number}}</span></td>
+            <td><span class="number">{{model.parent.getTriReinsurerPayment() | number}}</span></td>
         </tr>
     </tbody>
 </table>

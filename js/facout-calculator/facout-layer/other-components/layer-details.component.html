@@ -1,4 +1,4 @@
-<table class="table">
+<table class="uk-table uk-table-condensed uk-table-noborder">
     <thead>
         <th>&nbsp;</th>
         <th>Layer Details</th>
@@ -6,15 +6,15 @@
     <tbody>
         <tr>
             <td>Layer Limit</td>
-            <td><input type="text" ui-number-mask="0" ng-model="model.parent.layerLimit"></td>
+            <td class="foc-green"><input type="text" fcsa-number ng-model="model.parent.layer.layerLimit"></td>
         </tr>
         <tr>
             <td>Layer Premium</td>
-            <td><input type="text" ui-number-mask="0" ng-model="model.parent.layerPremium"></td>
+            <td class="foc-green"><input type="text" fcsa-number ng-model="model.parent.layer.layerPremium"></td>
         </tr>
         <tr>
             <td>Underlying Limit</td>
-            <td><input type="text" ui-number-mask="0" ng-model="model.parent.underlyingLimit"></td>
+            <td class="foc-green"><input type="text" fcsa-number ng-model="model.parent.layer.underlyingLimit"></td>
         </tr>
     </tbody>
 </table>
