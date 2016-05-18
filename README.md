@@ -1,1 +1,1 @@
-[(Demo)](http://pearpages.com/facout-calculator)
+[Go to the Demo](http://pearpages.com/facout-calculator)
